@@ -8,6 +8,8 @@ import Messages from 'views/home/Messages';
 import News from 'views/home/News';
 import ScheduleView from 'views/home/Schedule';
 import Ability from 'views/home/Ability';
+import Courses from 'views/home/Courses';
+import AssessmentIcon from '@material-ui/icons/Assessment';
 
 export interface Route {
     path: string;
@@ -50,6 +52,14 @@ const routes: Route[] = [
         iconColor: 'Primary',
         layout: '/home',
         component: ScheduleView
+    },
+    {
+        path: '/courses',
+        name: 'Kurser',
+        icon: AssessmentIcon,
+        iconColor: 'Primary',
+        layout: '/home',
+        component: Courses
     },
     {
         path: '/ability',

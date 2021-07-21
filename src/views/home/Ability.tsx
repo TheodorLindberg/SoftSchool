@@ -118,7 +118,7 @@ function Ability() {
                     <Grid container>
                         <Grid item justifyContent="space-between">
                             <Typography variant="h5">
-                                Lärarens kommentarer
+                                Lärarens kommentar
                             </Typography>
                         </Grid>
                         <AbilityCommentHistory />
