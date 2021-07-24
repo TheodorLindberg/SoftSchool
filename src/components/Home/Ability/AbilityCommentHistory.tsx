@@ -8,13 +8,12 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import {
-    CommentHistoryData,
-    commentHistoryRespons
-} from 'assets/data/abilityResponse';
+
 import { Typography } from '@material-ui/core';
 
 import Moment from 'react-moment';
+import { useCommentHistoryResource } from 'api/api';
+import { MatrixCommentHistoryField } from 'api/apiDefinitions';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -39,7 +38,54 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-export default function MaxWidthDialog() {
+function CommentHistoryDialog({ commentId }: { commentId: number }) {
+    const { status, data } = useCommentHistoryResource(commentId);
+    const classes = useStyles();
+
+    return (
+        <>
+            {data &&
+                data.map((comment: MatrixCommentHistoryField, i: number) => (
+                    <Paper style={{ margin: 8 }}>
+                        <Grid
+                            container
+                            justifyContent="space-between"
+                            style={{ padding: 16 }}
+                        >
+                            <Grid item>
+                                <Typography>{comment.author}</Typography>
+                            </Grid>
+                            <Grid item>
+                                <Typography>
+                                    <Moment
+                                        locale="sv"
+                                        date={comment.date}
+                                        format="LL"
+                                    ></Moment>
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                        <Typography
+                            style={{
+                                whiteSpace: 'pre-line',
+                                textAlign: 'left'
+                            }}
+                            className={classes.paper}
+                            dangerouslySetInnerHTML={{
+                                __html: comment.comment
+                            }}
+                        ></Typography>
+                    </Paper>
+                ))}
+        </>
+    );
+}
+
+export default function AbilityCommentHistory({
+    commentId
+}: {
+    commentId: number;
+}) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
 
@@ -71,42 +117,7 @@ export default function MaxWidthDialog() {
             >
                 <DialogTitle id="max-width-dialog-title">Historik</DialogTitle>
                 <DialogContent>
-                    {commentHistoryRespons.history.map(
-                        (comment: CommentHistoryData, i: number) => (
-                            <Paper style={{ margin: 8 }}>
-                                <Grid
-                                    container
-                                    justifyContent="space-between"
-                                    style={{ padding: 16 }}
-                                >
-                                    <Grid item>
-                                        <Typography>
-                                            {comment.author}
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item>
-                                        <Typography>
-                                            <Moment
-                                                locale="sv"
-                                                date={comment.date}
-                                                format="LL"
-                                            ></Moment>
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                                <Typography
-                                    style={{
-                                        whiteSpace: 'pre-line',
-                                        textAlign: 'left'
-                                    }}
-                                    className={classes.paper}
-                                    dangerouslySetInnerHTML={{
-                                        __html: comment.comment
-                                    }}
-                                ></Typography>
-                            </Paper>
-                        )
-                    )}
+                    {open && <CommentHistoryDialog commentId={commentId} />}
                     <br></br>
                 </DialogContent>
                 <DialogActions>

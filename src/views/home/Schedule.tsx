@@ -49,7 +49,6 @@ function Schedule() {
     };
     return (
         <>
-            <div style={{ height: 100 }}></div>
             <Container maxWidth={false as const}>
                 <Box
                     display="flex"

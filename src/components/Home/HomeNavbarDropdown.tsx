@@ -19,7 +19,7 @@ import Settings from '@material-ui/icons/Settings';
 import componentStyles from 'assets/theme/components/home/home-navbar-dropdown';
 
 const useStyles = makeStyles(componentStyles);
-import avatar from 'assets/img/theme/team-4-800x800.jpg'; // with import
+import avatar from 'assets/img/theme/avatar.jpeg'; // with import
 
 function HomeNavbarDropdown() {
     const classes = useStyles({});
@@ -48,13 +48,6 @@ function HomeNavbarDropdown() {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <Typography
-                variant="h6"
-                component="h6"
-                classes={{ root: classes.menuTitle }}
-            >
-                Welcome!
-            </Typography>
             <Box
                 display="flex!important"
                 alignItems="center!important"
@@ -62,12 +55,14 @@ function HomeNavbarDropdown() {
                 onClick={handleMenuClose}
             >
                 <Box
-                    component={Person}
                     width="1.25rem!important"
                     height="1.25rem!important"
+                    color="secondary!important"
                     marginRight="1rem"
-                />
-                <span>My profile</span>
+                >
+                    <Person color="primary" />
+                </Box>
+                <span>Profil</span>
             </Box>
             <Box
                 display="flex!important"
@@ -76,40 +71,14 @@ function HomeNavbarDropdown() {
                 onClick={handleMenuClose}
             >
                 <Box
-                    component={Settings}
                     width="1.25rem!important"
                     height="1.25rem!important"
+                    color="secondary!important"
                     marginRight="1rem"
-                />
-                <span>Settings</span>
-            </Box>
-            <Box
-                display="flex!important"
-                alignItems="center!important"
-                component={MenuItem}
-                onClick={handleMenuClose}
-            >
-                <Box
-                    component={EventNote}
-                    width="1.25rem!important"
-                    height="1.25rem!important"
-                    marginRight="1rem"
-                />
-                <span>Activity</span>
-            </Box>
-            <Box
-                display="flex!important"
-                alignItems="center!important"
-                component={MenuItem}
-                onClick={handleMenuClose}
-            >
-                <Box
-                    component={LiveHelp}
-                    width="1.25rem!important"
-                    height="1.25rem!important"
-                    marginRight="1rem"
-                />
-                <span>Support</span>
+                >
+                    <Settings color="primary" />
+                </Box>
+                <span>Inställningar</span>
             </Box>
             <Divider component="div" classes={{ root: classes.dividerRoot }} />
             <Box
@@ -119,12 +88,14 @@ function HomeNavbarDropdown() {
                 onClick={handleMenuClose}
             >
                 <Box
-                    component={DirectionsRun}
                     width="1.25rem!important"
                     height="1.25rem!important"
+                    color="secondary!important"
                     marginRight="1rem"
-                />
-                <span>Logout</span>
+                >
+                    <DirectionsRun color="secondary" />
+                </Box>
+                <span>Logga ut</span>
             </Box>
         </Menu>
     );

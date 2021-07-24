@@ -12,10 +12,15 @@ const componentStyles: Styles<
     | 'logoLinkClasses'
     | 'menuPaper'
     | 'outlineNone'
+    | 'navLogoLinkClass'
+    | 'popupListRoot'
 > = (theme: Theme) => {
     return {
         listRoot: {
             marginTop: '2rem',
+            height: '100%'
+        },
+        popupListRoot: {
             height: '100%'
         },
         listItemRoot: {
@@ -40,6 +45,13 @@ const componentStyles: Styles<
             display: 'block',
             textAlign: 'center'
         },
+        navLogoLinkClass: {
+            fontSize: '1.25rem',
+            color: theme.palette.primary.contrastText,
+            textDecoration: 'none',
+            display: 'block',
+            textAlign: 'center'
+        },
         listItemSelected: {
             color: theme.palette.primary.dark,
             '&$listItemRoot,&$listItemRoot:hover': {
@@ -50,7 +62,7 @@ const componentStyles: Styles<
                 bottom: '.25rem',
                 left: 0,
                 right: 'auto',
-                borderLeft: '2px solid ' + theme.palette.primary.dark,
+                borderLeft: '2px solid ' + theme.palette.secondary.main,
                 borderBottom: 0,
                 content: '""',
                 position: 'absolute'

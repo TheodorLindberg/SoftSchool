@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
@@ -7,16 +7,22 @@ import Typography from '@material-ui/core/Typography';
 import componentStyles from 'assets/theme/components/home/home-navbar';
 import { makeStyles } from '@material-ui/core/styles';
 import HomeNavbarDropdown from './HomeNavbarDropdown';
+import { Button, Grid, Input } from '@material-ui/core';
+import { useToken, useTokenController } from 'api/TokenProvider';
 
 const useStyles = makeStyles(componentStyles);
 
 function HomeNavbar({ page }: { page: string }) {
     const classes = useStyles({});
 
+    const [token, setToken] = useState(useToken());
+
+    const { make, destroy } = useTokenController();
+
     return (
         <AppBar
-            position="absolute"
-            color="transparent"
+            position="static"
+            color="primary"
             elevation={0}
             classes={{ root: classes.appBarRoot }}
         >
@@ -31,7 +37,6 @@ function HomeNavbar({ page }: { page: string }) {
                         justifyContent="space-between"
                         alignItems="center"
                         width="100%"
-                        marginTop="0.5rem"
                     >
                         <div>
                             <Typography
@@ -42,7 +47,38 @@ function HomeNavbar({ page }: { page: string }) {
                                 {page}
                             </Typography>
                         </div>
-                        <HomeNavbarDropdown />
+
+                        <div>
+                            <Grid container>
+                                <div>
+                                    <Input
+                                        value={token}
+                                        onChange={(
+                                            e: React.ChangeEvent<HTMLInputElement>
+                                        ) => {
+                                            setToken(e.currentTarget.value);
+                                        }}
+                                    />
+                                    <Button
+                                        onClick={() => {
+                                            make(token as string);
+                                        }}
+                                    >
+                                        Use
+                                    </Button>
+                                    <Button
+                                        onClick={() => {
+                                            destroy();
+                                        }}
+                                    >
+                                        Logout
+                                    </Button>
+                                </div>
+                                <div>
+                                    <HomeNavbarDropdown />
+                                </div>
+                            </Grid>
+                        </div>
                     </Box>
                 </Container>
             </Toolbar>

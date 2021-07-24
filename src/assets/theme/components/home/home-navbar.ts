@@ -13,10 +13,8 @@ const componentStyles: Styles<
             }
         },
         brandTitle: {
-            textTransform: 'uppercase',
-            margin: '0',
-            color: theme.palette.primary.main,
-            [theme.breakpoints.down('md')]: {
+            color: theme.palette.primary.contrastText,
+            [theme.breakpoints.down('sm')]: {
                 display: 'none'
             }
         },

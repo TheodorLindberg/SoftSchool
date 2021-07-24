@@ -11,21 +11,19 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import TableCell from '@material-ui/core/TableCell';
 
-import abilityResponse, {
-    Ability as AbilityData,
-    AbilityField,
-    level,
-    commentHistoryRespons,
-    CommentHistoryData,
-    abilityHistoryResponse,
-    AbilityHistoryData
-} from 'assets/data/abilityResponse';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import { Typography } from '@material-ui/core';
 import Moment from 'react-moment';
+import {
+    Ability,
+    AbilityFields,
+    AbilityHistoryField,
+    abilityLevel
+} from 'api/apiDefinitions';
+import { useAbilityResource } from 'api/api';
 
-function levelToColor(level: level) {
+function levelToColor(level: abilityLevel) {
     if (level == 'green') return '#8ad82e';
     else if (level == 'yellow') return '#fffd65';
     else if (level == 'none') return 'transparent';
@@ -97,7 +95,92 @@ const useStyles = makeStyles((theme: Theme) => {
     };
 });
 
-function AbilityRow({ ability }: { ability: AbilityData }) {
+function AbilityHistory({ abilityId }: { abilityId: number }) {
+    const { status, data } = useAbilityResource(abilityId);
+    const classes = useStyles();
+
+    return (
+        <>
+            {data &&
+                data.map((ability: AbilityHistoryField, i: number) => (
+                    <Paper style={{ margin: 8 }}>
+                        <Grid
+                            container
+                            justifyContent="space-between"
+                            style={{ padding: '16px 16px 0px 16px' }}
+                        >
+                            <Grid item>
+                                <Typography>{ability.author}</Typography>
+                            </Grid>
+                            <Grid item>
+                                <Typography>
+                                    <Moment
+                                        locale="sv"
+                                        date={ability.date}
+                                        format="LLL"
+                                    ></Moment>
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                        <div className={classes.tableContainer}>
+                            <TableRow classes={{ root: classes.tableRowRoot }}>
+                                <InnerStyledTableCell
+                                    style={{ verticalAlign: 'top' }}
+                                >
+                                    <p
+                                        className={classes.abilityColor}
+                                        style={{
+                                            backgroundColor: levelToColor(
+                                                ability.E.level
+                                            )
+                                        }}
+                                        dangerouslySetInnerHTML={{
+                                            __html: ability.C.text
+                                        }}
+                                    ></p>
+                                </InnerStyledTableCell>
+                                <InnerStyledTableCell
+                                    style={{ verticalAlign: 'top' }}
+                                >
+                                    <p
+                                        className={classes.abilityColor}
+                                        style={{
+                                            backgroundColor: levelToColor(
+                                                ability.C.level
+                                            )
+                                        }}
+                                        dangerouslySetInnerHTML={{
+                                            __html: ability.C.text
+                                        }}
+                                    ></p>
+                                </InnerStyledTableCell>
+                                <InnerStyledTableCell
+                                    style={{ verticalAlign: 'top' }}
+                                >
+                                    <p
+                                        className={classes.abilityColor}
+                                        style={{
+                                            backgroundColor: levelToColor(
+                                                ability.A.level
+                                            )
+                                        }}
+                                        dangerouslySetInnerHTML={{
+                                            __html: ability.C.text
+                                        }}
+                                    ></p>
+                                </InnerStyledTableCell>
+                            </TableRow>
+                        </div>
+                        <Typography style={{ padding: '0px 16px 16px 16px' }}>
+                            {ability.comment}
+                        </Typography>
+                    </Paper>
+                ))}
+        </>
+    );
+}
+
+function AbilityRow({ ability }: { ability: Ability }) {
     const classes = useStyles();
 
     const E = useRef<null | HTMLParagraphElement>(null);
@@ -105,14 +188,13 @@ function AbilityRow({ ability }: { ability: AbilityData }) {
     const A = useRef<null | HTMLParagraphElement>(null);
 
     const updateStyle = (ref: any, abilityStep: any, hover: boolean) => {
-        if (ref.current) {
+        if (ref.current && abilityStep.level != 'none') {
             const shadows = hover ? `1px 1px 1px black` : 'unset';
             ref.current.style.boxShadow = shadows;
         }
     };
 
     const handleHoverStart = (event: React.MouseEvent<HTMLDivElement>) => {
-        console.log('Hover');
         updateStyle(E, ability.E, true);
         updateStyle(C, ability.C, true);
         updateStyle(A, ability.A, true);
@@ -149,7 +231,7 @@ function AbilityRow({ ability }: { ability: AbilityData }) {
                             backgroundColor: levelToColor(ability.E.level)
                         }}
                         dangerouslySetInnerHTML={{
-                            __html: ability.C.content
+                            __html: ability.C.text
                         }}
                     ></p>
                 </StyledTableCell>
@@ -161,7 +243,7 @@ function AbilityRow({ ability }: { ability: AbilityData }) {
                             backgroundColor: levelToColor(ability.C.level)
                         }}
                         dangerouslySetInnerHTML={{
-                            __html: ability.C.content
+                            __html: ability.C.text
                         }}
                     ></p>
                 </StyledTableCell>
@@ -174,14 +256,14 @@ function AbilityRow({ ability }: { ability: AbilityData }) {
                             backgroundColor: levelToColor(ability.A.level)
                         }}
                         dangerouslySetInnerHTML={{
-                            __html: ability.C.content
+                            __html: ability.C.text
                         }}
                     ></p>
                 </StyledTableCell>
 
                 <StyledTableCell
                     dangerouslySetInnerHTML={{
-                        __html: ability.comments
+                        __html: ability.comment
                     }}
                 ></StyledTableCell>
             </StyledTableRow>
@@ -195,91 +277,7 @@ function AbilityRow({ ability }: { ability: AbilityData }) {
             >
                 <DialogTitle id="max-width-dialog-title">Historik</DialogTitle>
                 <DialogContent>
-                    {abilityHistoryResponse.history.map(
-                        (ability: AbilityHistoryData, i: number) => (
-                            <Paper style={{ margin: 8 }}>
-                                <Grid
-                                    container
-                                    justifyContent="space-between"
-                                    style={{ padding: '16px 16px 0px 16px' }}
-                                >
-                                    <Grid item>
-                                        <Typography>
-                                            {ability.author}
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item>
-                                        <Typography>
-                                            <Moment
-                                                locale="sv"
-                                                date={ability.date}
-                                                format="LLL"
-                                            ></Moment>
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                                <div className={classes.tableContainer}>
-                                    <TableRow
-                                        classes={{ root: classes.tableRowRoot }}
-                                    >
-                                        <InnerStyledTableCell
-                                            style={{ verticalAlign: 'top' }}
-                                        >
-                                            <p
-                                                className={classes.abilityColor}
-                                                style={{
-                                                    backgroundColor:
-                                                        levelToColor(
-                                                            ability.E.level
-                                                        )
-                                                }}
-                                                dangerouslySetInnerHTML={{
-                                                    __html: ability.C.content
-                                                }}
-                                            ></p>
-                                        </InnerStyledTableCell>
-                                        <InnerStyledTableCell
-                                            style={{ verticalAlign: 'top' }}
-                                        >
-                                            <p
-                                                className={classes.abilityColor}
-                                                style={{
-                                                    backgroundColor:
-                                                        levelToColor(
-                                                            ability.C.level
-                                                        )
-                                                }}
-                                                dangerouslySetInnerHTML={{
-                                                    __html: ability.C.content
-                                                }}
-                                            ></p>
-                                        </InnerStyledTableCell>
-                                        <InnerStyledTableCell
-                                            style={{ verticalAlign: 'top' }}
-                                        >
-                                            <p
-                                                className={classes.abilityColor}
-                                                style={{
-                                                    backgroundColor:
-                                                        levelToColor(
-                                                            ability.A.level
-                                                        )
-                                                }}
-                                                dangerouslySetInnerHTML={{
-                                                    __html: ability.C.content
-                                                }}
-                                            ></p>
-                                        </InnerStyledTableCell>
-                                    </TableRow>
-                                </div>
-                                <Typography
-                                    style={{ padding: '0px 16px 16px 16px' }}
-                                >
-                                    {ability.comments}
-                                </Typography>
-                            </Paper>
-                        )
-                    )}
+                    {open && <AbilityHistory abilityId={ability.abilityId} />}
                     <br></br>
                 </DialogContent>
                 <DialogActions>

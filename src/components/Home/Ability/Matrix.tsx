@@ -1,4 +1,4 @@
-import { fetchResource } from 'api/api';
+import { fetchResource, useMatrixResource } from 'api/api';
 import { Course, CourseMatrixResponse } from 'api/apiDefinitions';
 import React, { useEffect, useState } from 'react';
 import Table from '@material-ui/core/Table';
@@ -9,9 +9,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import AbilityCommentHistory from 'components/Ability/AbilityCommentHistory';
+import AbilityCommentHistory from 'components/Home/Ability/AbilityCommentHistory';
 import Moment from 'react-moment';
-import AbilityRow from 'components/Ability/AbilityRow';
+import AbilityRow from 'components/Home/Ability/AbilityRow';
 
 import Grid from '@material-ui/core/Grid';
 
@@ -24,30 +24,10 @@ import {
 
 type status = 'loading' | 'loaded' | 'error';
 
-export function useMatrixResponse(): {
-    status: status;
-    data: CourseMatrixResponse | null;
-} {
-    const [status, setStatus] = useState<status>('loading');
-    const [data, setData] = useState<CourseMatrixResponse | null>(null);
-    useEffect(() => {
-        fetchResource<CourseMatrixResponse>('/courses')
-            .then((response) => {
-                setData(response.data);
-                setStatus('loaded');
-            })
-            .catch((error: any) => {
-                setStatus('error');
-            });
-    }, []);
-
-    return { status: status, data: data };
-}
-
 const StyledTableCell = withStyles((theme: Theme) => ({
     head: {
-        backgroundColor: theme.palette.primary.light,
-        color: theme.palette.text.primary,
+        backgroundColor: theme.palette.primary.main,
+        color: theme.palette.primary.contrastText,
         fontSize: 16,
         [theme.breakpoints.down('sm')]: {
             padding: 4
@@ -76,7 +56,8 @@ const useStyles = makeStyles((theme: Theme) => {
 });
 
 function Matrix({ course }: { course: Course }) {
-    const { status, data } = useMatrixResponse();
+    const { status, data } = useMatrixResource(course.id);
+
     const classes = useStyles();
     return (
         <>
@@ -87,17 +68,17 @@ function Matrix({ course }: { course: Course }) {
                     marginBottom: 16
                 }}
             >
-                <Typography variant="h5">
-                    Kunskapskrav för {data && course.name}
+                <Typography variant="h5" color="textPrimary">
+                    Kunskapskrav för {course.name}
                 </Typography>
-                <Typography>
+                {/* <Typography>
                     Upptaderad
                     <Moment
                         locale="sv"
-                        date={data?.courseMatrix.lastChange}
+                        date={data?.lastChange}
                         format=" LL"
                     ></Moment>
-                </Typography>
+                </Typography> */}
             </div>
 
             <TableContainer component={Paper}>
@@ -115,9 +96,9 @@ function Matrix({ course }: { course: Course }) {
                     </TableHead>
                     <TableBody>
                         {data &&
-                            data.courseMatrix.abilities.map((ability: any) => (
+                            data.abilities.map((ability: any, i: number) => (
                                 <AbilityRow
-                                    key={ability.name}
+                                    key={i + ability.name}
                                     ability={ability}
                                 />
                             ))}
@@ -129,12 +110,14 @@ function Matrix({ course }: { course: Course }) {
                     <Grid item justifyContent="space-between">
                         <Typography variant="h5">Lärarens kommentar</Typography>
                     </Grid>
-                    <AbilityCommentHistory />
+                    <AbilityCommentHistory
+                        commentId={data?.commentAbilityId || 0}
+                    />
                 </Grid>
 
                 <Typography
                     dangerouslySetInnerHTML={{
-                        __html: data?.courseMatrix.comment || ''
+                        __html: data?.comment || ''
                     }}
                 ></Typography>
             </Paper>

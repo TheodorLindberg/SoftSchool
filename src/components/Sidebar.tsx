@@ -18,6 +18,7 @@ import Menu from '@material-ui/core/Menu';
 import Clear from '@material-ui/icons/Clear';
 import MenuIcon from '@material-ui/icons/Menu';
 import Container from '@material-ui/core/Container';
+import HomeNavbarDropdown from './Home/HomeNavbarDropdown';
 
 const useStyles = makeStyles(componentStyles);
 
@@ -98,7 +99,7 @@ function Sidebar({ routes }: { routes: Route[] }) {
             </Hidden>
 
             <Hidden mdUp implementation="css">
-                <AppBar position="relative" color="default" elevation={0}>
+                <AppBar position="relative" color="primary" elevation={0}>
                     <Toolbar>
                         <Container
                             display="flex!important"
@@ -118,10 +119,15 @@ function Sidebar({ routes }: { routes: Route[] }) {
                                 aria-haspopup="true"
                                 onClick={handleMenuOpen}
                             />
-                            <Link
-                                to={'/'}
-                                className={classes.logoLinkClasses}
-                            />
+                            <Box>
+                                <Link
+                                    to="/"
+                                    className={classes.navLogoLinkClass}
+                                >
+                                    SoftSchool
+                                </Link>
+                            </Box>
+                            <HomeNavbarDropdown />
                         </Container>
                     </Toolbar>
                 </AppBar>
@@ -141,10 +147,11 @@ function Sidebar({ routes }: { routes: Route[] }) {
                         alignItems="center"
                         paddingLeft="1.25rem"
                         paddingRight="1.25rem"
-                        paddingBottom="1rem"
                         className={classes.outlineNone}
                     >
-                        <Link to={'/'} className={classes.logoLinkClasses} />
+                        <Link to={'/'} className={classes.logoLinkClasses}>
+                            SoftSchool
+                        </Link>
                         <Box
                             component={Clear}
                             width="2rem!important"
@@ -154,13 +161,13 @@ function Sidebar({ routes }: { routes: Route[] }) {
                             onClick={handleMenuClose}
                         />
                     </Box>
-                    <Box
+                    {/* <Box
                         component={Divider}
                         marginBottom="1rem!important"
                         marginLeft="1.25rem!important"
                         marginRight="1.25rem!important"
-                    />
-                    <List classes={{ root: classes.listRoot }}>
+                    /> */}
+                    <List classes={{ root: classes.popupListRoot }}>
                         {createLinks(routes)}
                     </List>
                 </Menu>

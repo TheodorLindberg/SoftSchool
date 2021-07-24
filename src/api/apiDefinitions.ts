@@ -4,38 +4,42 @@ export type abilityLevel = 'none' | 'yellow' | 'green';
 export interface AbilityField {
     text: string;
     level: abilityLevel;
-    abilityId: number;
 }
 
 export interface AbilityFields {
     E: AbilityField;
     C: AbilityField;
     A: AbilityField;
+    abilityId: number;
     comment: string;
 }
 
-export interface AbilityHistory extends AbilityFields {
+export interface AbilityHistoryField extends AbilityFields {
     index: number;
     date: string;
     author: string;
 }
+
+export type AbilityHistory = AbilityHistoryField[];
 
 export interface Ability extends AbilityFields {
     name: string;
     history?: AbilityHistory;
 }
 
-export interface MatrixCommentHistory {
+export interface MatrixCommentHistoryField {
     author: string;
     date: string;
     comment: string;
 }
 
+export type MatrixCommentHistory = MatrixCommentHistoryField[];
+
 export interface Matrix {
     lastChange: string;
     commentAbilityId: number;
     comment: string;
-    commentHistory?: MatrixCommentHistory[];
+    commentHistory?: MatrixCommentHistory;
 
     abilities: Ability[];
 }
@@ -55,6 +59,7 @@ export interface Course {
     id: number;
     category: string;
     points: number;
+    year: number;
     start: string;
     end: string;
     teacher: string;
@@ -63,12 +68,25 @@ export interface Course {
     matrix?: Matrix;
 }
 
+export interface CourseList {
+    compleated: Course[];
+    started: Course[];
+    notstarted: Course[];
+}
+
 //Messages
 export interface Message {
     title: string;
     date: string;
     author: string;
     content: string;
+    hashId?: number;
+}
+
+export interface MessageList {
+    messages: Message[];
+    offset: number;
+    total: number;
 }
 
 //News
@@ -164,23 +182,20 @@ export interface Response {
 
 //Messages
 export interface MessagesResponse extends Response {
-    messages: Message[];
-    startIndex: number;
-    endIndex: number;
-    totalMessages: number;
+    data: MessageList;
 }
 
 //Ability
 export interface CourseMatrixResponse extends Response {
-    courseMatrix: CourseMatrix;
+    data: Matrix;
 }
 
 export interface AbilityHistoryResponse extends Response {
-    history: AbilityHistory;
+    data: AbilityHistory;
 }
 
 export interface MatrixCommentHistoryResponse extends Response {
-    history: MatrixCommentHistory;
+    data: MatrixCommentHistory;
 }
 
 //Profile
@@ -191,7 +206,5 @@ export interface ProfileResponse extends Response {
 //Course response
 
 export interface CoursesResponse extends Response {
-    compleated: Course[];
-    started: Course[];
-    notstarted: Course[];
+    data: CourseList;
 }

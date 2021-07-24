@@ -5,35 +5,15 @@ import {
     Theme,
     Typography
 } from '@material-ui/core';
-import { fetchResource } from 'api/api';
+import { fetchResource, useCoursesResource } from 'api/api';
 import { Course, CoursesResponse, MessagesResponse } from 'api/apiDefinitions';
 import { Paper } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { Link, Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import CourseView from './courses/Course';
+import { useToken } from 'api/TokenProvider';
 
-type status = 'loading' | 'loaded' | 'error';
-
-export function useCoursesResource(): {
-    status: status;
-    data: CoursesResponse | null;
-} {
-    const [status, setStatus] = useState<status>('loading');
-    const [data, setData] = useState<CoursesResponse | null>(null);
-    useEffect(() => {
-        fetchResource<CoursesResponse>('/courses')
-            .then((response) => {
-                setData(response.data);
-                setStatus('loaded');
-            })
-            .catch((error) => {
-                setStatus('error');
-            });
-    }, []);
-
-    return { status: status, data: data };
-}
 const useStyles = makeStyles((theme: Theme) => ({
     course: {}
 }));
@@ -72,7 +52,7 @@ function CoursesView() {
     return (
         <>
             <div style={{ height: 100 }}></div>
-            <Container>
+            <Container maxWidth="xl">
                 <Typography variant="h5">Pågående Kurser</Typography>
                 {status == 'loaded' && (
                     <CoursesList courses={data?.started}></CoursesList>
@@ -92,7 +72,8 @@ function CoursesView() {
 
 function Courses() {
     const { status, data } = useCoursesResource();
-
+    const token = useToken();
+    console.log(status);
     return (
         <Switch>
             {data &&
@@ -115,6 +96,9 @@ function Courses() {
                 component={CoursesView}
             ></Route>
             {data && (
+                <Redirect from="/home/courses/*" to="/home/courses"></Redirect>
+            )}
+            {status == 'error' && (
                 <Redirect from="/home/courses/*" to="/home/courses"></Redirect>
             )}
         </Switch>

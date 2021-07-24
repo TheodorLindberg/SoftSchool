@@ -17,7 +17,6 @@ function HomeFooter() {
                     component={Grid as React.ElementType<any>}
                     display="flex"
                     alignItems="center"
-                    className={classes.justifyContentCenter}
                 >
                     <div className={classes.copyrightWrapper}>
                         © {new Date().getFullYear()}{' '}

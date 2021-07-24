@@ -1,11 +1,5 @@
 import React, { useRef } from 'react';
 
-import abilityResponse, {
-    Ability as AbilityData,
-    AbilityField,
-    level,
-    commentHistoryRespons
-} from 'assets/data/abilityResponse';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 
@@ -23,9 +17,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import AbilityCommentHistory from 'components/Ability/AbilityCommentHistory';
+import AbilityCommentHistory from 'components/Home/Ability/AbilityCommentHistory';
 import Moment from 'react-moment';
-import AbilityRow from 'components/Ability/AbilityRow';
+import AbilityRow from 'components/Home/Ability/AbilityRow';
 
 const StyledTableCell = withStyles((theme: Theme) => ({
     head: {
@@ -62,7 +56,6 @@ function Ability() {
     const classes = useStyles();
     return (
         <>
-            <div style={{ height: 100 }}></div>
             <Container maxWidth={'xl'}>
                 <div
                     style={{
@@ -72,13 +65,13 @@ function Ability() {
                     }}
                 >
                     <Typography variant="h5">
-                        Kunskapskrav för {abilityResponse.courseName}
+                        {/* Kunskapskrav för {abilityResponse.courseName} */}
                     </Typography>
                     <Typography>
                         Upptaderad
                         <Moment
                             locale="sv"
-                            date={abilityResponse.lastChange}
+                            // date={abilityResponse.lastChange}
                             format=" LL"
                         ></Moment>
                     </Typography>
@@ -103,14 +96,14 @@ function Ability() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {abilityResponse.requirments.map(
+                            {/* {abilityResponse.requirments.map(
                                 (ability: AbilityData) => (
                                     <AbilityRow
                                         key={ability.name}
                                         ability={ability}
                                     />
                                 )
-                            )}
+                            )} */}
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -121,13 +114,13 @@ function Ability() {
                                 Lärarens kommentar
                             </Typography>
                         </Grid>
-                        <AbilityCommentHistory />
+                        <AbilityCommentHistory commentId={0} />
                     </Grid>
 
                     <Typography
-                        dangerouslySetInnerHTML={{
-                            __html: abilityResponse.comment
-                        }}
+                    // dangerouslySetInnerHTML={{
+                    //     __html: abilityResponse.comment
+                    // }}
                     ></Typography>
                 </Paper>
             </Container>

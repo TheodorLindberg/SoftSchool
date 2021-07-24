@@ -18,9 +18,9 @@ const componentStyles: Styles<
             }
         },
         buttonLabel: {
-            fontSize: '.875rem',
-            fontWeight: 600,
-            color: theme.palette.secondary.main,
+            fontSize: theme.typography.pxToRem(17),
+            fontWeight: 500,
+            color: theme.palette.primary.contrastText,
             textTransform: 'capitalize',
             display: 'flex',
             alignItems: 'center',

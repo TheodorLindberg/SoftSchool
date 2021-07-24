@@ -128,7 +128,6 @@ function Dashboard() {
                 maxWidth={false as const}
                 classes={{ root: classes.containerRoot }}
             >
-                <div style={{ height: 100 }}></div>
                 <WidgetGrid layout={layout}>
                     <WidgetItem area="schedule">1</WidgetItem>
                     <WidgetItem area="messages">2</WidgetItem>
