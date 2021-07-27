@@ -20,6 +20,7 @@ import componentStyles from 'assets/theme/components/home/home-navbar-dropdown';
 
 const useStyles = makeStyles(componentStyles);
 import avatar from 'assets/img/theme/avatar.jpeg'; // with import
+import { useHistory } from 'react-router-dom';
 
 function HomeNavbarDropdown() {
     const classes = useStyles({});
@@ -27,6 +28,7 @@ function HomeNavbarDropdown() {
         null
     );
 
+    const history = useHistory();
     const isMenuOpen = Boolean(anchorEl);
 
     const handleProfileMenuOpen = (event: any) => {
@@ -35,6 +37,11 @@ function HomeNavbarDropdown() {
 
     const handleMenuClose = () => {
         setAnchorEl(null);
+    };
+
+    const handleSettings = () => {
+        history.push('/home/settings');
+        handleMenuClose();
     };
 
     const menuId = 'primary-search-account-menu';
@@ -68,7 +75,7 @@ function HomeNavbarDropdown() {
                 display="flex!important"
                 alignItems="center!important"
                 component={MenuItem}
-                onClick={handleMenuClose}
+                onClick={handleSettings}
             >
                 <Box
                     width="1.25rem!important"

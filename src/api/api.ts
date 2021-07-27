@@ -14,8 +14,8 @@ import {
 import { useToken } from './TokenProvider';
 
 const JSESSIONID = '043C76C3CE935D01D4949A4F22DB360E';
-const desktop = true;
-const apiBaseUrl = desktop
+export const desktop = true;
+export const apiBaseUrl = desktop
     ? 'http://192.168.10.228:5000/api'
     : 'http://localhost:5000/api';
 
@@ -29,12 +29,15 @@ export interface cache {
 (window as any).apiCache = {};
 
 export const cache: cache = (window as any).apiCache;
+export function resetCache() {
+    cache.abilities = {};
+    cache.courses = {};
+    cache.matricies = {};
+    cache.messages = null as any;
+}
+resetCache();
 
-cache.abilities = {};
-cache.courses = {};
-cache.matricies = {};
-
-const dev = true;
+export const dev = true;
 
 export async function fetchResource<ResponseType>(
     path: string,
@@ -129,15 +132,7 @@ export function useMessageResource(): MessageResource {
             fetchResource<any>('/messages', token as string)
                 .then((response) => {
                     const data: MessageList = response.data.data;
-                    for (const message of data.messages) {
-                        message.hashId = Array.from(
-                            message.title + message.date + message.author
-                        ).reduce(
-                            (hash, char) =>
-                                0 | (31 * hash + char.charCodeAt(0)),
-                            0
-                        );
-                    }
+
                     console.log(data);
                     setMessages(data);
 

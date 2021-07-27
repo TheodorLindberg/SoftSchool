@@ -51,30 +51,6 @@ function HomeNavbar({ page }: { page: string }) {
                         <div>
                             <Grid container>
                                 <div>
-                                    <Input
-                                        value={token}
-                                        onChange={(
-                                            e: React.ChangeEvent<HTMLInputElement>
-                                        ) => {
-                                            setToken(e.currentTarget.value);
-                                        }}
-                                    />
-                                    <Button
-                                        onClick={() => {
-                                            make(token as string);
-                                        }}
-                                    >
-                                        Use
-                                    </Button>
-                                    <Button
-                                        onClick={() => {
-                                            destroy();
-                                        }}
-                                    >
-                                        Logout
-                                    </Button>
-                                </div>
-                                <div>
                                     <HomeNavbarDropdown />
                                 </div>
                             </Grid>

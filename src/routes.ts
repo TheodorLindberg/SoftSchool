@@ -10,14 +10,16 @@ import ScheduleView from 'views/home/Schedule';
 import Ability from 'views/home/Ability';
 import Courses from 'views/home/Courses';
 import AssessmentIcon from '@material-ui/icons/Assessment';
+import Settings from 'views/home/Settings';
 
 export interface Route {
     path: string;
     name: string;
-    icon: any;
-    iconColor: string;
     layout: string;
+    icon?: any;
+    iconColor?: string;
     component?: any;
+    sidebar?: boolean;
 }
 
 const routes: Route[] = [
@@ -27,7 +29,8 @@ const routes: Route[] = [
         icon: Tv,
         iconColor: 'Primary',
         layout: '/home',
-        component: Dashboard
+        component: Dashboard,
+        sidebar: true
     },
     {
         path: '/messages',
@@ -35,7 +38,8 @@ const routes: Route[] = [
         icon: Message,
         iconColor: 'Primary',
         layout: '/home',
-        component: Messages
+        component: Messages,
+        sidebar: true
     },
     {
         path: '/news',
@@ -43,7 +47,8 @@ const routes: Route[] = [
         icon: Announcement,
         iconColor: 'Primary',
         layout: '/home',
-        component: News
+        component: News,
+        sidebar: true
     },
     {
         path: '/schedule',
@@ -51,7 +56,8 @@ const routes: Route[] = [
         icon: Schedule,
         iconColor: 'Primary',
         layout: '/home',
-        component: ScheduleView
+        component: ScheduleView,
+        sidebar: true
     },
     {
         path: '/courses',
@@ -59,7 +65,8 @@ const routes: Route[] = [
         icon: AssessmentIcon,
         iconColor: 'Primary',
         layout: '/home',
-        component: Courses
+        component: Courses,
+        sidebar: true
     },
     {
         path: '/ability',
@@ -67,7 +74,14 @@ const routes: Route[] = [
         icon: School,
         iconColor: 'Primary',
         layout: '/home',
-        component: Ability
+        component: Ability,
+        sidebar: true
+    },
+    {
+        path: '/settings',
+        name: 'Inställningar',
+        layout: '/home',
+        component: Settings
     }
 ];
 

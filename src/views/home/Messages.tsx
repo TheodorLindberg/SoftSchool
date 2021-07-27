@@ -12,6 +12,23 @@ import { useMessageResource } from 'api/api';
 import { Message, MessageList } from 'api/apiDefinitions';
 import HomeContainer from 'components/Home/HomeContainer';
 import MessageFilter from 'components/Home/Messages/MessageFilter';
+import axios from 'axios';
+import { useAppDispatch, useAppSelector } from 'store';
+import {
+    configToggleMessageHidden,
+    saveConfig,
+    selectConfig,
+    selectHiddenMessages
+} from 'api/configSlice';
+import {
+    fetchMessages,
+    fetchMoreMessages,
+    FilterdMessage,
+    selectFilteredMessages,
+    selectMessages,
+    selectMessagesCanLoadMore
+} from 'api/messagesSlice';
+import { selectMessageFilters } from 'api/messageFiltersSlice';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -24,6 +41,9 @@ const useStyles = makeStyles((theme: Theme) => ({
         fontSize: theme.typography.pxToRem(17),
         color: theme.palette.text.primary,
         flexShrink: 0
+    },
+    headingDisabled: {
+        color: theme.palette.text.disabled + '!important'
     },
     headingRight: {},
     senderHeading: {
@@ -50,11 +70,32 @@ const useStyles = makeStyles((theme: Theme) => ({
 function Messages() {
     const classes = useStyles();
     const [expanded, setExpanded] = React.useState<number | null>(null);
-    const { status, data, load } = useMessageResource();
 
-    const [messages, setMessages] = useState<Message[]>([]);
+    const dispatch = useAppDispatch();
 
-    const handleChange =
+    const messagesStatus = useAppSelector((state) => state.messages.status);
+    const messagesCanLoadMore = useAppSelector(selectMessagesCanLoadMore);
+    const filterdMessages = useAppSelector(selectFilteredMessages);
+    const hiddenMessages = useAppSelector(selectHiddenMessages);
+
+    useEffect(() => {
+        if (messagesStatus === 'idle') {
+            dispatch(fetchMessages());
+        }
+    }, [messagesStatus, dispatch]);
+
+    const toggleMessageHidden = (id: number) => {
+        dispatch(configToggleMessageHidden(id));
+        dispatch(saveConfig());
+        setExpanded(null);
+    };
+
+    const loadMoreMessages = () => {
+        dispatch(fetchMoreMessages(20));
+    };
+    console.log(hiddenMessages);
+
+    const handleAccordionChange =
         (panel: number) =>
         (event: React.ChangeEvent<unknown>, isExpanded: boolean) => {
             setExpanded(isExpanded ? panel : null);
@@ -63,115 +104,123 @@ function Messages() {
     return (
         <>
             <HomeContainer>
-                <MessageFilter
-                    setMessages={(filterdMessages: Message[]) => {
-                        setMessages(filterdMessages);
-                    }}
-                    messages={data ? data.messages : []}
-                />
+                <MessageFilter />
                 <div>
-                    {messages.map((message: Message, i: number) => {
-                        return (
-                            <Accordion
-                                key={i}
-                                expanded={expanded === i}
-                                onChange={handleChange(i)}
-                            >
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls={`${i}msg`}
-                                    id={`${i}msg`}
-                                    classes={{
-                                        content: classes.headingRoot
-                                    }}
+                    {filterdMessages.map(
+                        (message: FilterdMessage, i: number) => {
+                            return (
+                                <Accordion
+                                    key={message.id}
+                                    expanded={expanded === i}
+                                    onChange={handleAccordionChange(i)}
                                 >
-                                    <Grid
-                                        container
-                                        className={classes.headingRight}
+                                    <AccordionSummary
+                                        expandIcon={<ExpandMoreIcon />}
+                                        aria-controls={`${i}msg`}
+                                        id={`${i}msg`}
+                                        classes={{
+                                            content: classes.headingRoot
+                                        }}
                                     >
-                                        <Grid item md={7} xs={12}>
-                                            <Typography
-                                                className={classes.heading}
-                                            >
-                                                {message.title}
-                                            </Typography>
-                                        </Grid>
-                                        <Grid item md={5} xs={12}>
-                                            <Grid container classes={{}}>
-                                                <Grid
-                                                    item
-                                                    xs={6}
-                                                    md={7}
-                                                    lg={9}
-                                                    xl={10}
+                                        <Grid
+                                            container
+                                            className={classes.headingRight}
+                                        >
+                                            <Grid item md={7} xs={12}>
+                                                <Typography
+                                                    className={
+                                                        classes.heading +
+                                                        (message.hidden
+                                                            ? ' ' +
+                                                              classes.headingDisabled
+                                                            : '')
+                                                    }
                                                 >
-                                                    <Typography
-                                                        className={
-                                                            classes.senderHeading
-                                                        }
+                                                    {message.title}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item md={5} xs={12}>
+                                                <Grid container classes={{}}>
+                                                    <Grid
+                                                        item
+                                                        xs={6}
+                                                        md={7}
+                                                        lg={9}
+                                                        xl={10}
                                                     >
-                                                        {message.author}
-                                                    </Typography>
-                                                </Grid>
-                                                <Grid
-                                                    item
-                                                    xs={6}
-                                                    md={5}
-                                                    lg={3}
-                                                    xl={2}
-                                                >
-                                                    <Typography
-                                                        className={
-                                                            classes.dateHeading
-                                                        }
+                                                        <Typography
+                                                            className={
+                                                                classes.senderHeading
+                                                            }
+                                                        >
+                                                            {message.author}
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid
+                                                        item
+                                                        xs={6}
+                                                        md={5}
+                                                        lg={3}
+                                                        xl={2}
                                                     >
-                                                        {message.date}
-                                                    </Typography>
+                                                        <Typography
+                                                            className={
+                                                                classes.dateHeading
+                                                            }
+                                                        >
+                                                            {message.date}
+                                                        </Typography>
+                                                    </Grid>
                                                 </Grid>
                                             </Grid>
                                         </Grid>
-                                    </Grid>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <Grid container>
-                                        <Grid item md={10} lg={11}>
-                                            <Typography
-                                                className={
-                                                    classes.messageContent
-                                                }
-                                                dangerouslySetInnerHTML={{
-                                                    __html: message.content
-                                                }}
-                                            ></Typography>
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <Grid container>
+                                            <Grid item md={10} lg={11}>
+                                                <Typography
+                                                    className={
+                                                        classes.messageContent
+                                                    }
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: message.content
+                                                    }}
+                                                ></Typography>
+                                            </Grid>
+                                            <Grid item md={2} lg={1} xs={12}>
+                                                <Button
+                                                    style={{ float: 'right' }}
+                                                    color="secondary"
+                                                    variant="outlined"
+                                                    onClick={() =>
+                                                        toggleMessageHidden(
+                                                            message.id
+                                                        )
+                                                    }
+                                                >
+                                                    {message.hidden
+                                                        ? 'Visa igen'
+                                                        : 'Göm'}
+                                                </Button>
+                                            </Grid>
                                         </Grid>
-                                        <Grid item md={2} lg={1} xs={12}>
-                                            <Button
-                                                style={{ float: 'right' }}
-                                                color="secondary"
-                                                variant="outlined"
-                                            >
-                                                Ta Bort
-                                            </Button>
-                                        </Grid>
-                                    </Grid>
-                                </AccordionDetails>
-                            </Accordion>
-                        );
-                    })}
+                                    </AccordionDetails>
+                                </Accordion>
+                            );
+                        }
+                    )}
                 </div>
                 <Grid
                     container
                     justifyContent="center"
                     style={{ marginTop: 10 }}
                 >
-                    {data && data.total > data.offset && (
+                    {messagesCanLoadMore && (
                         <Button
                             variant="outlined"
                             color="secondary"
                             className={classes.buttonLoadMore}
-                            onClick={() => {
-                                load(20);
-                            }}
+                            onClick={loadMoreMessages}
                         >
                             Ladda fler
                         </Button>

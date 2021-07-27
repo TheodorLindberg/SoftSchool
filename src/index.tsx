@@ -15,6 +15,14 @@ import HomeLayout from 'layouts/HomeLayout';
 import 'moment/locale/sv';
 import TokenProvider from 'api/TokenProvider';
 
+import { Provider } from 'react-redux';
+
+import store from './store';
+import { fetchConfig } from 'api/configSlice';
+import AuthLayout from 'layouts/AuthLayout';
+
+store.dispatch(fetchConfig());
+
 export const themeOptions: ThemeOptions = {
     palette: {
         type: 'light'
@@ -39,14 +47,17 @@ const theme = createTheme(themeOptions);
 ReactDOM.render(
     <ThemeProvider theme={theme}>
         <TokenProvider>
-            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-            <CssBaseline />
-            <BrowserRouter>
-                <Switch>
-                    <Route path="/home" render={() => <HomeLayout />} />
-                    <Redirect from="/" to="/home" />
-                </Switch>
-            </BrowserRouter>
+            <Provider store={store}>
+                {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+                <CssBaseline />
+                <BrowserRouter>
+                    <Switch>
+                        <Route path="/home" render={() => <HomeLayout />} />
+                        <Route exact path="/" render={() => <AuthLayout />} />
+                        <Redirect from="/*" to="/" />
+                    </Switch>
+                </BrowserRouter>
+            </Provider>
         </TokenProvider>
     </ThemeProvider>,
     document.querySelector('#root')

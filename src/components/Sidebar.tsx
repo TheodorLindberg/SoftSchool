@@ -41,6 +41,7 @@ function Sidebar({ routes }: { routes: Route[] }) {
 
     const createLinks = (routes: Route[]) => {
         return routes.map((route, key) => {
+            if (!route.sidebar) return;
             const textContent = (
                 <>
                     <Box minWidth="2.25rem" display="flex" alignItems="center">

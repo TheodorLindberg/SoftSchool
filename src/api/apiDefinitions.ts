@@ -80,7 +80,7 @@ export interface Message {
     date: string;
     author: string;
     content: string;
-    hashId?: number;
+    id: number;
 }
 
 export interface MessageList {

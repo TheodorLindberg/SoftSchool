@@ -19,48 +19,19 @@ import { Message, MessageList } from 'api/apiDefinitions';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import React, { useEffect } from 'react';
+import axios from 'axios';
+import { useAppDispatch, useAppSelector } from 'store';
+import {
+    messageFiltersShowHiddenChange,
+    messageFiltersTeachersChange,
+    selectMessageFilters
+} from 'api/messageFiltersSlice';
+import { selectMessages } from 'api/messagesSlice';
 
-const BootstrapInput = withStyles((theme: Theme) => ({
-    root: {
-        'label + &': {
-            marginTop: theme.spacing(3)
-        }
-    },
-    input: {
-        borderRadius: 4,
-        position: 'relative',
-        backgroundColor: theme.palette.background.paper,
-        border: '1px solid #ced4da',
-        fontSize: 16,
-        padding: '10px 26px 10px 12px',
-        transition: theme.transitions.create(['border-color', 'box-shadow']),
-        // Use the system font instead of the default Roboto font.
-        fontFamily: [
-            '-apple-system',
-            'BlinkMacSystemFont',
-            '"Segoe UI"',
-            'Roboto',
-            '"Helvetica Neue"',
-            'Arial',
-            'sans-serif',
-            '"Apple Color Emoji"',
-            '"Segoe UI Emoji"',
-            '"Segoe UI Symbol"'
-        ].join(','),
-        '&:focus': {
-            borderRadius: 4,
-            borderColor: '#80bdff',
-            boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)'
-        }
-    }
-}))(InputBase);
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
 const MenuProps = {
     PaperProps: {
         style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            maxHeight: 48 * 4.5 + 8,
             width: 250
         }
     }
@@ -87,46 +58,36 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function MessageFilter({
-    messages,
-    setMessages
-}: {
-    messages: Message[];
-    setMessages: (messages: Message[]) => void;
-}) {
+function MessageFilter() {
     const classes = useStyles();
     const theme = useTheme();
-    const [senders, setSenders] = React.useState<string[]>([]);
-    const [showRemoved, setShowRemoved] = React.useState<boolean>(false);
 
-    const handleShowRemovedChange = (
+    const messages = useAppSelector(selectMessages);
+
+    const dispatch = useAppDispatch();
+    const { showHidden, teachers } = useAppSelector(selectMessageFilters);
+
+    const handleShowHiddenChange = (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
-        setShowRemoved(event.target.checked);
+        dispatch(messageFiltersShowHiddenChange(event.target.checked));
     };
 
-    const handleSendersChange = (event: any) => {
-        setSenders(event.target.value);
+    const handleSendersChange = (
+        event: React.ChangeEvent<{
+            name?: string | undefined;
+            value: unknown;
+        }>
+    ) => {
+        dispatch(messageFiltersTeachersChange(event.target.value as string[]));
     };
 
-    const teachers: Record<string, boolean> = {};
-
-    messages.forEach((msg) => {
-        teachers[msg.author] = true;
-    });
-
-    useEffect(() => {
-        let filterdMessages: Message[] = [];
-        console.log('Filterd');
-        if (senders.length > 0) {
-            messages.forEach((msg: Message) => {
-                if (senders.indexOf(msg.author) > -1) {
-                    filterdMessages.push(msg);
-                }
-            });
-        } else filterdMessages = messages;
-        setMessages(filterdMessages);
-    }, [senders, messages, showRemoved]);
+    const allTeachers: Record<string, boolean> = {};
+    if (messages) {
+        messages.forEach((msg) => {
+            allTeachers[msg.author] = true;
+        });
+    }
 
     return (
         <div>
@@ -141,7 +102,7 @@ function MessageFilter({
                                 labelId="sender-mutiple-checkbox-label"
                                 id="sender-mutiple-checkbox"
                                 multiple
-                                value={senders}
+                                value={teachers}
                                 onChange={handleSendersChange}
                                 input={<Input />}
                                 renderValue={(selected: any) =>
@@ -149,7 +110,7 @@ function MessageFilter({
                                 }
                                 MenuProps={MenuProps}
                             >
-                                {Object.entries(teachers)
+                                {Object.entries(allTeachers)
                                     .sort()
                                     .map(([teacher, val]: [string, any]) => {
                                         return (
@@ -159,7 +120,7 @@ function MessageFilter({
                                             >
                                                 <Checkbox
                                                     checked={
-                                                        senders.indexOf(
+                                                        teachers.indexOf(
                                                             teacher
                                                         ) > -1
                                                     }
@@ -177,12 +138,12 @@ function MessageFilter({
                             style={{ marginBottom: 6 }}
                             control={
                                 <Switch
-                                    checked={showRemoved}
-                                    onChange={handleShowRemovedChange}
+                                    checked={showHidden}
+                                    onChange={handleShowHiddenChange}
                                     name="checkRemoved"
                                 />
                             }
-                            label="Visa bortagna"
+                            label="Visa gömda"
                         />
                     </FormGroup>
                 </Grid>
