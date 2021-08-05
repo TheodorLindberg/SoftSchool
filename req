@@ -1,3 +1,0 @@
-curl --location --request POST 'https://idp1.sollentuna.se/wa/auth' \
---header 'Content-Type: application/x-www-form-urlencoded' \
---data-raw 'authmech=Anv%C3%A4ndarnamn+och+L%C3%B6senord&do=login&username=thbjo_04&password=H3kf02lp&cbval_vendorBase64=AAAk%2FwMGAAAAAQ%3D%3D'
