@@ -29,6 +29,7 @@ import {
     selectMessagesCanLoadMore
 } from 'api/messagesSlice';
 import { selectMessageFilters } from 'api/messageFiltersSlice';
+import ResourceErrorDialog from 'components/Home/ResourceErrorDialog';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -93,7 +94,6 @@ function Messages() {
     const loadMoreMessages = () => {
         dispatch(fetchMoreMessages(20));
     };
-    console.log(hiddenMessages);
 
     const handleAccordionChange =
         (panel: number) =>
@@ -103,6 +103,14 @@ function Messages() {
 
     return (
         <>
+            {messagesStatus == 'failed' && (
+                <ResourceErrorDialog
+                    resourceName="meddelanden"
+                    retry={() => {
+                        dispatch(fetchMessages());
+                    }}
+                />
+            )}
             <HomeContainer>
                 <MessageFilter />
                 <div>
@@ -208,6 +216,9 @@ function Messages() {
                                 </Accordion>
                             );
                         }
+                    )}
+                    {filterdMessages.length == 0 && (
+                        <p>Det finns inte några meddelanden att visa</p>
                     )}
                 </div>
                 <Grid

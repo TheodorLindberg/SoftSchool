@@ -20,6 +20,13 @@ import TextField from '@material-ui/core/TextField';
 
 import HelpIcon from '@material-ui/icons/Help';
 import SessionForm from 'components/Auth/SessionForm';
+import { useAppDispatch, useAppSelector } from 'store';
+import {
+    selectSessionStatus,
+    selectSessionValid,
+    sessionUseDev
+} from 'api/sessionSlice';
+import { Redirect } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) => ({
     cardRoot: {
@@ -70,6 +77,9 @@ function Login() {
     const classes = useStyles();
     const theme = useTheme();
 
+    const dispatch = useAppDispatch();
+    const sessionValid = useAppSelector(selectSessionValid);
+
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
@@ -88,11 +98,11 @@ function Login() {
     };
 
     const onDevClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        return;
+        dispatch(sessionUseDev());
     };
-
     return (
         <>
+            {sessionValid && <Redirect to="/home" />}
             <Grid item xs={12} lg={5} md={7} sm={9}>
                 <Card classes={{ root: classes.cardRoot }}>
                     <CardHeader

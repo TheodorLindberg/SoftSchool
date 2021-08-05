@@ -16,9 +16,14 @@ const configServerUrl = desktop
     ? 'http://192.168.10.228:3001'
     : 'http://localhost:3001';
 
+export interface Error {
+    status: number;
+    message: string;
+}
+
 export interface MessagesState {
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
-    error: string | null;
+    error: Error | null;
     messageList: MessageList;
 }
 
@@ -48,22 +53,39 @@ const messagesSlice = createSlice({
                 ]
             };
             state.status = 'succeeded';
+        },
+        messagesError(state, action: PayloadAction<Error>) {
+            state.status = 'failed';
+            state.error = action.payload;
         }
     }
 });
-export const { messagesLoading, messagesLoaded } = messagesSlice.actions;
+export const { messagesLoading, messagesLoaded, messagesError } =
+    messagesSlice.actions;
 
-export const fetchMessages = () => async (dispatch: AppDispatch) => {
-    dispatch(messagesLoading({}));
-    let response: AxiosResponse<MessagesResponse>;
-    try {
-        response = await axios.get<MessagesResponse>(apiBaseUrl + '/messages');
-    } catch (error: any) {
-        alert('Error status: ' + error.response.status);
-        return;
-    }
-    dispatch(messagesLoaded(response.data.data));
-};
+export const fetchMessages =
+    () => async (dispatch: AppDispatch, getState: () => RootState) => {
+        if (
+            getState().session.status == 'valid' ||
+            getState().session.status == 'dev'
+        ) {
+            dispatch(messagesLoading({}));
+            let response: AxiosResponse<MessagesResponse>;
+            try {
+                response = await axios.get<MessagesResponse>(
+                    apiBaseUrl + '/messages'
+                );
+                dispatch(messagesLoaded(response.data.data));
+            } catch (error: any) {
+                dispatch(
+                    messagesError({
+                        message: error.message,
+                        status: error?.response?.status || 500
+                    })
+                );
+            }
+        }
+    };
 
 export const fetchMoreMessages =
     (count: number) =>

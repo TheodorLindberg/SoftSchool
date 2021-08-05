@@ -21,8 +21,6 @@ import store from './store';
 import { fetchConfig } from 'api/configSlice';
 import AuthLayout from 'layouts/AuthLayout';
 
-store.dispatch(fetchConfig());
-
 export const themeOptions: ThemeOptions = {
     palette: {
         type: 'light'

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Sidebar from 'components/Sidebar';
 import Box from '@material-ui/core/Box';
 import componentStyles from 'assets/theme/layouts/home';
@@ -9,12 +9,29 @@ import Container from '@material-ui/core/Container';
 
 import routes from 'routes';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from 'store';
+import { selectSessionValid } from 'api/sessionSlice';
+import { selectConfigState } from 'api/configSlice';
+import ConfigDialog from 'components/Home/ConfigDialog/ConfigDialog';
+import { fetchCourses, selectCoursesState } from 'api/coursesSlice';
 
 const useStyles = makeStyles(componentStyles);
 
 function HomeLayout() {
     const classes = useStyles({});
     const location = useLocation();
+
+    const sessionValid = useAppSelector(selectSessionValid);
+    const config = useAppSelector(selectConfigState);
+
+    const dispatch = useAppDispatch();
+
+    const coursesState = useAppSelector(selectCoursesState);
+    useEffect(() => {
+        if (coursesState.status === 'idle') {
+            dispatch(fetchCourses());
+        }
+    }, [coursesState.status, dispatch]);
 
     const getPageText = () => {
         for (let i = 0; i < routes.length; i++) {
@@ -30,6 +47,7 @@ function HomeLayout() {
 
     return (
         <>
+            {!sessionValid && <Redirect to="/" />}
             <Sidebar routes={routes}></Sidebar>
             <Box position="relative" className={classes.mainContent}>
                 <HomeNavbar page={getPageText()} />
@@ -58,6 +76,7 @@ function HomeLayout() {
                     <HomeFooter />
                 </Container>
             </Box>
+            <ConfigDialog />
         </>
     );
 }

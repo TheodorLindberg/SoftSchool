@@ -204,7 +204,11 @@ export interface ProfileResponse extends Response {
 }
 
 //Course response
+export interface CoursesResponseData extends CourseList {
+    studentId: number;
+    name: string;
+}
 
 export interface CoursesResponse extends Response {
-    data: CourseList;
+    data: CoursesResponseData;
 }

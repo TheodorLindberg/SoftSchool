@@ -21,12 +21,21 @@ import componentStyles from 'assets/theme/components/home/home-navbar-dropdown';
 const useStyles = makeStyles(componentStyles);
 import avatar from 'assets/img/theme/avatar.jpeg'; // with import
 import { useHistory } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from 'store';
+import { sessionDestroy } from 'api/sessionSlice';
+import { logout } from 'api/sessionSlice';
+import { selectConfig, selectConfigState } from 'api/configSlice';
 
 function HomeNavbarDropdown() {
     const classes = useStyles({});
     const [anchorEl, setAnchorEl] = React.useState<HTMLAnchorElement | null>(
         null
     );
+
+    const dispatch = useAppDispatch();
+
+    const name = useAppSelector(selectConfig).name;
+    const name2 = useAppSelector(selectConfigState).student?.name;
 
     const history = useHistory();
     const isMenuOpen = Boolean(anchorEl);
@@ -41,6 +50,11 @@ function HomeNavbarDropdown() {
 
     const handleSettings = () => {
         history.push('/home/settings');
+        handleMenuClose();
+    };
+    const handleLogout = () => {
+        dispatch(logout());
+
         handleMenuClose();
     };
 
@@ -92,7 +106,7 @@ function HomeNavbarDropdown() {
                 display="flex!important"
                 alignItems="center!important"
                 component={MenuItem}
-                onClick={handleMenuClose}
+                onClick={handleLogout}
             >
                 <Box
                     width="1.25rem!important"
@@ -127,7 +141,7 @@ function HomeNavbarDropdown() {
                         root: classes.avatarRoot
                     }}
                 />
-                <Hidden smDown>Jessica Jones</Hidden>
+                <Hidden smDown>{name || name2 || 'Användare'} </Hidden>
             </Button>
             {renderMenu}
         </>

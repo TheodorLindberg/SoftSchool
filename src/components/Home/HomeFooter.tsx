@@ -36,7 +36,6 @@ function HomeFooter() {
                     xl={6}
                     component={Box as React.ElementType<any>}
                     display="flex"
-                    justifyContent="flex-end"
                 >
                     <Box
                         component={List}
