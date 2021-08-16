@@ -1,14 +1,20 @@
 import React from "react";
-import { ThemeProvider } from "@material-ui/core/styles";
-import theme from "theme/theme";
-import { Provider as ReduxProvider } from "react-redux";
-import store from "store";
-
+import PropTypes from "prop-types";
 import Head from "next/head";
-
+import { ThemeProvider } from "@material-ui/core/styles";
+import { Provider as ReduxProvider } from "react-redux";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import theme from "theme/theme";
+import store from "store";
+import { ReactReduxFirebaseProvider } from "react-redux-firebase";
+import { rrfProps } from "modules/config/config.firebase";
 
-function MyApp({ Component, pageProps }: any) {
+import "moment/locale/sv";
+import ConfigDialogProvider from "modules/config/ConfigDialogProvider";
+
+export default function MyApp(props: any) {
+  const { Component, pageProps } = props;
+
   React.useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector("#jss-server-side");
@@ -16,7 +22,6 @@ function MyApp({ Component, pageProps }: any) {
       jssStyles.parentElement?.removeChild(jssStyles);
     }
   }, []);
-
   return (
     <React.Fragment>
       <Head>
@@ -28,13 +33,20 @@ function MyApp({ Component, pageProps }: any) {
       </Head>
       <ThemeProvider theme={theme}>
         <ReduxProvider store={store}>
-          {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-          <CssBaseline />
-          <Component {...pageProps} />
+          <ReactReduxFirebaseProvider {...rrfProps}>
+            <ConfigDialogProvider>
+              {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+              <CssBaseline />
+              <Component {...pageProps} />
+            </ConfigDialogProvider>
+          </ReactReduxFirebaseProvider>
         </ReduxProvider>
       </ThemeProvider>
     </React.Fragment>
   );
 }
 
-export default MyApp;
+MyApp.propTypes = {
+  Component: PropTypes.elementType.isRequired,
+  pageProps: PropTypes.object.isRequired,
+};

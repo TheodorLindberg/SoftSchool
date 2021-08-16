@@ -1,30 +1,50 @@
 import Cheerio from "cheerio";
-import { Course, CourseList } from "../definitions";
+import { ActiveCourse, Course, CourseList, courseStatus } from "../definitions";
 import { fetchSchoolsoftPage } from "../fetchSchoolsoftPage";
 
 export default async function getCourses(token: string): Promise<CourseList> {
   const page = await fetchSchoolsoftPage("/right_student_course.jsp", token);
 
   const $ = Cheerio.load(page);
-  const getCourseList = function (table: cheerio.Cheerio, grade: boolean) {
+  const getCourseList = function (
+    table: cheerio.Cheerio,
+    status: courseStatus
+  ) {
+    let layout: { [key: string]: number } = {};
+    table
+      .find("tr.longlistheader")
+      .children()
+      .each((i, elem) => {
+        layout[$(elem).text()] = i;
+      });
+    console.log(layout);
+    const getCategory = (name: string, e: cheerio.Cheerio) => {
+      if (layout.hasOwnProperty(name)) {
+        return $(e.children()[layout[name]]).text();
+      } else {
+        return "";
+      }
+    };
+
     let courses: Array<Course> = [];
     table
       .children("tr[class=' ']:not(:last-child)")
       .each((i: number, elem: cheerio.Element) => {
         let e = $(elem);
         courses.push({
-          name: $(e.children()[0]).text(),
-          code: $(e.children()[1]).text(),
-          category: $(e.children()[2]).text(),
-          points: Number.parseInt($(e.children()[3]).text()),
-          start: $(e.children()[4]).text(),
-          end: $(e.children()[5]).text(),
-          year: Number.parseInt($(e.children()[6]).text()),
-          teacher: $(e.children()[7]).text(),
-          grade: $(e.children()[grade ? 8  : 7]).text(),
-          ur: $(e.children()[grade ? 9 : 8]).text(),
+          name: getCategory("Kurs", e),
+          code: getCategory("Kurskod", e),
+          category: getCategory("Kategori", e),
+          points: Number.parseInt(getCategory("Poäng", e)),
+          start: getCategory("Startdatum", e),
+          end: getCategory("Slutdatum", e),
+          year: Number.parseInt(getCategory("År", e)),
+          teacher: getCategory("Lärare", e),
+          grade: getCategory("Betyg", e),
+          ur: getCategory("U/R", e),
+          status: status,
           id: Number.parseInt(
-            $($(e.children()[grade ? 10 : 9]).find("input.hidden"))
+            $($(e.children()[layout["Kursmatris"]]).find("input.hidden"))
               .attr("id")
               ?.substr(15) || ""
           ),
@@ -32,16 +52,30 @@ export default async function getCourses(token: string): Promise<CourseList> {
       });
     return courses;
   };
+  let active: ActiveCourse[] = [];
+  $("#subject_menu")
+    .children()
+    .each((i, elem) => {
+      active.push({
+        name: $(elem).text(),
+        id: Number.parseInt($(elem).attr("name")?.substr(12) as string),
+      });
+    });
 
   return {
-    compleated: getCourseList(
-      $("#inv_couse_content > table:nth-child(6) > tbody"),
-      true
-    ),
-    started: getCourseList($("#edit > table > tbody"), true),
-    notstarted: getCourseList(
-      $("#inv_couse_content > table:nth-child(3) > tbody"),
-      false
-    ),
+    active: active,
+    list: [
+      ...getCourseList(
+        $("#inv_couse_content > table:nth-child(6) > tbody"),
+
+        "compleated"
+      ),
+      ...getCourseList($("#edit > table > tbody"), "started"),
+      ...getCourseList(
+        $("#inv_couse_content > table:nth-child(3) > tbody"),
+
+        "notstarted"
+      ),
+    ],
   };
 }

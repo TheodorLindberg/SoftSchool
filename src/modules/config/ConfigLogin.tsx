@@ -1,0 +1,137 @@
+import TextField from "@material-ui/core/TextField";
+import React, { useState } from "react";
+
+import { useAppDispatch, useAppSelector } from "store";
+
+import componentStyles from "theme/modules/config/signup";
+
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import {
+  Button,
+  makeStyles,
+  Theme,
+  useTheme,
+  withStyles,
+} from "@material-ui/core";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import axios from "axios";
+import Box from "@material-ui/core/Box";
+import { useFirebase } from "react-redux-firebase";
+
+import { Field, Form, Formik } from "formik";
+
+import Image from "next/image";
+import githubSvg from "../../../public/img/icons/common/github.svg";
+import googleSvg from "../../../public/img/icons/common/google.svg";
+
+const useStyles = makeStyles(componentStyles);
+
+function ConfigLogin() {
+  const theme = useTheme();
+  const dispatch = useAppDispatch();
+  const firebase = useFirebase();
+  const classes = useStyles({});
+
+  return (
+    <>
+      <DialogTitle id="form-dialog-title">Extra</DialogTitle>
+      <DialogContent>
+        <Box textAlign="center">
+          {/* <Button
+              variant="contained"
+              style={{ marginRight: ".5rem!important" }}
+              classes={{ root: classes.buttonRoot }}
+            >
+              <Box component="span" marginRight="4px">
+                <Image
+                  src={githubSvg}
+                  alt="Github"
+                  width="20"
+                  className={classes.buttonImg}
+                />
+              </Box>
+              <Box component="span" marginLeft=".75rem">
+                Github
+              </Box>
+            </Button> */}
+          <Button
+            variant="contained"
+            classes={{ root: classes.buttonRoot }}
+            onClick={() => {
+              firebase.login({
+                provider: "google",
+                type: "redirect",
+              });
+            }}
+          >
+            <Image
+              src={googleSvg}
+              alt="Google"
+              width="20"
+              height="20"
+              className={classes.buttonImg}
+            />
+            <Box component="span" marginLeft=".75rem">
+              Google
+            </Box>
+          </Button>
+        </Box>
+        <Formik
+          initialValues={{ email: "", password: "" }}
+          onSubmit={(data, { setSubmitting }) => {
+            setSubmitting(true);
+            firebase.login({ email: data.email, password: data.password });
+          }}
+        >
+          {({ values, isSubmitting }) => (
+            <Form>
+              <Box
+                color={theme.palette.grey[600]}
+                textAlign="center"
+                marginBottom="1rem"
+                marginTop="1.5rem"
+                fontSize="1rem"
+              >
+                <Box fontSize="80%" fontWeight="400" component="small">
+                  Eller med användarnamn och lösenord
+                </Box>
+              </Box>
+              <Field
+                placeholder="Email"
+                name="email"
+                type="input"
+                variant="outlined"
+                fullWidth={true as const}
+                style={{ marginBottom: theme.spacing(2) }}
+                as={TextField}
+              />
+              <Field
+                placeholder="Password"
+                name="password"
+                type="input"
+                variant="outlined"
+                fullWidth={true as const}
+                as={TextField}
+              />
+
+              <Box textAlign="center" marginTop="1.5rem">
+                <Button
+                  color="primary"
+                  variant="contained"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  Logga In
+                </Button>
+              </Box>
+            </Form>
+          )}
+        </Formik>
+      </DialogContent>
+    </>
+  );
+}
+
+export default ConfigLogin;

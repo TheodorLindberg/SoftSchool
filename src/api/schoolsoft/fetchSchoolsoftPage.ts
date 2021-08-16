@@ -1,5 +1,5 @@
 import { Response } from "./definitions";
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, Method } from "axios";
 import { Iconv } from "iconv";
 import HttpError from "../error";
 import { NextApiRequest } from "next";
@@ -10,7 +10,12 @@ export const cache = false;
 
 const url = process.env.SCHOOLSOFT_PATH;
 
-export async function fetchSchoolsoftPage(path: string, JSESSIONID?: string) {
+export async function fetchSchoolsoftPage(
+  path: string,
+  JSESSIONID?: string,
+  method?: Method,
+  data?: any
+) {
   console.log(url + path);
   if (!JSESSIONID) throw new HttpError("Invalid Schoolsoft Session", 403);
   let response;
@@ -18,11 +23,13 @@ export async function fetchSchoolsoftPage(path: string, JSESSIONID?: string) {
   try {
     response = await axios.request({
       url: url + path,
-      method: "GET",
+      method: method || "GET",
       headers: {
         Cookie: `JSESSIONID=${JSESSIONID}`,
+        ...(data && { "Content-Type": "application/x-www-form-urlencoded" }),
       },
       responseType: "arraybuffer",
+      data: data,
     });
   } catch (error: any) {
     if (error?.response?.status == 403) {

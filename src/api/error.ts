@@ -14,7 +14,7 @@ export function handleError<Data>(err: any, res: NextApiResponse<Data>) {
     res.status(err.code || 500).send({
       error: err.message,
       code: err.code,
-      ...(process.env.NODE_ENVv == "development" && {
+      ...(process.env.NODE_ENV == "development" && {
         stack: err.stack,
         name: err.name,
       }),
@@ -22,7 +22,7 @@ export function handleError<Data>(err: any, res: NextApiResponse<Data>) {
   } else if (err instanceof Error) {
     res.status(500).send({
       error: err.message,
-      ...(process.env.NODE_ENVv == "development" && {
+      ...(process.env.NODE_ENV == "development" && {
         stack: err.stack,
         name: err.name,
       }),

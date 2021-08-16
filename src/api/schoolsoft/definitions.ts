@@ -65,13 +65,18 @@ export interface Course {
   teacher: string;
   grade: string;
   ur: string;
+  status: courseStatus;
   matrix?: Matrix;
 }
 
+export interface ActiveCourse {
+  name: string;
+  id: number;
+}
+
 export interface CourseList {
-  compleated: Course[];
-  started: Course[];
-  notstarted: Course[];
+  list: Course[];
+  active: ActiveCourse[];
 }
 
 //Messages
@@ -88,6 +93,27 @@ export interface MessageList {
   offset: number;
   total: number;
 }
+
+export interface Attatchment {
+  name: string;
+  id: string;
+  link: string;
+  size: string;
+}
+
+export interface News {
+  title: string;
+  recipients: string;
+  group: number;
+  published: string;
+  showUntil: string;
+  content: string;
+  sender: string;
+  senderInstance: string;
+  attatchments: [];
+}
+
+export type NewsList = News[];
 
 //News
 export interface News {
@@ -140,6 +166,7 @@ export interface LessonEvent {
   courseCode: string;
   teacherName: string;
   courseId: number;
+  period: string;
 }
 
 export interface TestEvent {
@@ -172,6 +199,14 @@ export interface WeekSchedule {
 
 export interface Schedule {
   weeks: WeekSchedule[];
+}
+// Schdesules list
+
+export interface SchedulesList {
+  teachers: { [id: number]: string };
+  classes: { [id: number]: string };
+  studentId: number;
+  name: string;
 }
 
 //Responses
@@ -207,4 +242,11 @@ export interface ProfileResponse extends Response {
 
 export interface CoursesResponse extends Response {
   data: CourseList;
+}
+export interface WeekScheduleResponse extends Response {
+  data: WeekSchedule;
+}
+
+export interface SchedulesListResponse extends Response {
+  data: SchedulesList;
 }

@@ -1,6 +1,8 @@
 import { createSlice, createSelector, PayloadAction } from "@reduxjs/toolkit";
 import { SCHOOLSOFT_API } from "api/apis";
 import axios, { AxiosError, AxiosResponse } from "axios";
+import moment from "moment";
+
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store";
 
@@ -18,7 +20,6 @@ export interface SessionState {
   status: SessionStatus;
   noneReason: SessionNoneReason | null;
   expire: string | null;
-
   error: string | null;
 }
 
@@ -40,8 +41,11 @@ const sessionSlice = createSlice({
     sessionValidated(state, action: PayloadAction<string>) {
       state.session = action.payload;
       state.status = "valid";
+      state.expire = moment().add(25, "m").toISOString();
     },
-
+    sessionUpdate(state, action: PayloadAction<undefined>) {
+      state.expire = moment().add(25, "m").toISOString();
+    },
     sessionInvalidate(state, action: PayloadAction<undefined>) {
       state.status = "none";
       state.noneReason = "invalid";
@@ -51,11 +55,13 @@ const sessionSlice = createSlice({
       state.status = "none";
       state.noneReason = "destroyed";
       state.session = "";
+      state.expire = null;
     },
     sessionError(state, action: PayloadAction<string>) {
       state.status = "none";
       state.noneReason = "error";
       state.error = action.payload;
+      state.expire = null;
     },
     sessionUseDev(state, action: PayloadAction<string | undefined>) {
       state.status = "dev";
@@ -70,11 +76,13 @@ export const {
   sessionDestroy,
   sessionUseDev,
   sessionError,
+  sessionUpdate,
 } = sessionSlice.actions;
 
 export const validateSession =
   (session: string) => async (dispatch: AppDispatch) => {
     dispatch(sessionValidating());
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     try {
       const response = await axios.get(SCHOOLSOFT_API + "/validate", {
         headers: {
@@ -83,14 +91,18 @@ export const validateSession =
       });
       if (response.data.valid == true) {
         dispatch(sessionValidated(session));
+        return "valid";
       } else {
         dispatch(sessionInvalidate());
+        return "invalid";
       }
     } catch (error: any) {
       if (error.response && error.response.status == 403) {
         dispatch(sessionInvalidate());
+        return "invalid";
       } else {
         dispatch(sessionError(error.message));
+        return "error";
       }
     }
   };
