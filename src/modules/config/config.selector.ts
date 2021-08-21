@@ -8,3 +8,6 @@ export const selectConfig = (state: RootState) =>
 
 export const selectConfigHidden = (state: RootState) =>
   selectConfig(state).hidden || [];
+
+export const selectConfigNewsHidden = (state: RootState) =>
+  selectConfig(state).newsHidden || [];
