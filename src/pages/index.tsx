@@ -1,9 +1,20 @@
+import { selectSession } from "modules/login/session.slice";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useAppSelector } from "store";
 
 export default function Home() {
   const router = useRouter();
+
+  const auth = useAppSelector(selectSession);
+
+  useEffect(() => {
+    if (auth.status == "valid") router.push("/home/dashboard");
+    else router.push("/login");
+  }, [auth.status]);
+
   return (
     <div>
       <Head>

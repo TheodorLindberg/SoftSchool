@@ -42,6 +42,7 @@ import { scheduleType } from "api/schoolsoft/scraper/getSchedule";
 import InfoIcon from "@material-ui/icons/Info";
 import { useRef } from "react";
 import { useCallback } from "react";
+import { AppointmentContent } from "modules/schedule/AppointmentContent";
 const useStyles = makeStyles((theme) => ({
   schedule: {
     backgroundColor: alpha(theme.palette.primary.main, 0.1),
@@ -160,6 +161,8 @@ function Dashboard() {
         startDate: event.startDate,
         endDate: event.endDate,
         title: event.lessonEvent?.courseName as string,
+        teacherName: event.lessonEvent?.teacherName as string,
+        locationName: event.location as string,
         location: classes[event.lessonEvent?.courseCode as string]
           .locationId as number,
         teacher: classes[event.lessonEvent?.courseCode as string]
@@ -226,12 +229,12 @@ function Dashboard() {
               onCurrentDateChange={currentDateChange}
             />
             <WeekView
-              startDayHour={7}
-              endDayHour={18}
+              startDayHour={7.5}
+              endDayHour={17}
               excludedDays={[0, 6]}
-              cellDuration={60}
+              cellDuration={30}
             />
-            <Appointments />
+            <Appointments appointmentContentComponent={AppointmentContent} />
             <AppointmentTooltip showCloseButton />
             <CurrentTimeIndicator
               shadePreviousCells={true}

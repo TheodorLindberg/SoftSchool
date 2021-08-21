@@ -96,32 +96,26 @@ export interface MessageList {
 
 export interface Attatchment {
   name: string;
-  id: string;
+  id: number;
   link: string;
   size: string;
 }
 
-export interface News {
-  title: string;
-  recipients: string;
-  group: number;
-  published: string;
-  showUntil: string;
-  content: string;
-  sender: string;
-  senderInstance: string;
-  attatchments: [];
-}
-
-export type NewsList = News[];
-
 //News
 export interface News {
   title: string;
-  date: string;
-  author: string;
+  id: number;
+  recipients: string;
+  group: number;
+  fromDate: string;
+  untilDate: string;
   content: string;
+  sender: string;
+  senderInstance: string;
+  attatchments: Attatchment[];
 }
+
+export type NewsList = News[];
 
 //Profile
 export interface Mentour {
@@ -249,4 +243,8 @@ export interface WeekScheduleResponse extends Response {
 
 export interface SchedulesListResponse extends Response {
   data: SchedulesList;
+}
+
+export interface NewsResponse extends Response {
+  data: NewsList;
 }

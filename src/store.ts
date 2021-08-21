@@ -12,6 +12,7 @@ import sessionSliceReducer from "modules/login/session.slice";
 import scheduleSliceReducer from "modules/schedule/schedule.slice";
 import scheduleListSliceReducer from "modules/schedule/schedule.list.slice";
 import coursesSliceReducer from "modules/courses/courses.slice";
+import newsSliceReducer from "modules/news/news.slice";
 
 import moment from "moment";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
@@ -30,6 +31,7 @@ const combinedReducer = combineReducers({
   courses: coursesSliceReducer,
   schedule: scheduleSliceReducer,
   scheduleList: scheduleListSliceReducer,
+  news: newsSliceReducer,
   session: sessionSliceReducer,
   firebase: firebaseReducer,
   firestore: firestoreReducer, // <- needed if using firestore

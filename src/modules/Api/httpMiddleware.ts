@@ -4,7 +4,11 @@ import {
 } from "@reduxjs/toolkit";
 import { SCHOOLSOFT_API } from "api/apis";
 import axios, { AxiosResponse } from "axios";
-import { sessionUpdate } from "modules/login/session.slice";
+import {
+  sessionExpired,
+  sessionInvalidate,
+  sessionUpdate,
+} from "modules/login/session.slice";
 import { RootState, StoreType } from "store";
 
 export interface HttpError {
@@ -52,12 +56,16 @@ export const http: any =
           store.dispatch(loaded(response.data.data));
           store.dispatch(sessionUpdate());
         } catch (error: any) {
-          store.dispatch(
-            resourceError({
-              message: error.message,
-              status: error?.response?.status || 500,
-            })
-          );
+          if (error?.response?.status == 403) {
+            store.dispatch(sessionExpired());
+          } else {
+            store.dispatch(
+              resourceError({
+                message: error.message,
+                status: error?.response?.status || 500,
+              })
+            );
+          }
         }
       } else {
         store.dispatch(

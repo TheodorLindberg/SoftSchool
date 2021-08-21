@@ -1,4 +1,9 @@
-import { createSlice, createSelector, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createSelector,
+  PayloadAction,
+  Action,
+} from "@reduxjs/toolkit";
 import { SCHOOLSOFT_API } from "api/apis";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import moment from "moment";
@@ -46,6 +51,7 @@ const sessionSlice = createSlice({
     sessionUpdate(state, action: PayloadAction<undefined>) {
       state.expire = moment().add(25, "m").toISOString();
     },
+
     sessionInvalidate(state, action: PayloadAction<undefined>) {
       state.status = "none";
       state.noneReason = "invalid";
@@ -63,6 +69,11 @@ const sessionSlice = createSlice({
       state.error = action.payload;
       state.expire = null;
     },
+    sessionExpired(state, action: Action) {
+      state.status = "none";
+      state.noneReason = "expired";
+      state.expire = null;
+    },
     sessionUseDev(state, action: PayloadAction<string | undefined>) {
       state.status = "dev";
       state.session = action.payload || "";
@@ -76,6 +87,7 @@ export const {
   sessionDestroy,
   sessionUseDev,
   sessionError,
+  sessionExpired,
   sessionUpdate,
 } = sessionSlice.actions;
 
@@ -90,7 +102,6 @@ export const validateSession =
         },
       });
       if (response.data.valid == true) {
-        dispatch(sessionValidated(session));
         return "valid";
       } else {
         dispatch(sessionInvalidate());
@@ -106,6 +117,33 @@ export const validateSession =
       }
     }
   };
+
+// export const loginSession =
+//   (username: string, password: string) => async (dispatch: AppDispatch) => {
+//     dispatch(sessionValidating());
+//     await new Promise((resolve) => setTimeout(resolve, 1000));
+//     try {
+//       const response = await axios.get(SCHOOLSOFT_API + "/login", {
+//         headers: {
+//           jsessionid: session,
+//         },
+//       });
+//       if (response.data.valid == true) {
+//         return "valid";
+//       } else {
+//         dispatch(sessionInvalidate());
+//         return "invalid";
+//       }
+//     } catch (error: any) {
+//       if (error.response && error.response.status == 403) {
+//         dispatch(sessionInvalidate());
+//         return "invalid";
+//       } else {
+//         dispatch(sessionError(error.message));
+//         return "error";
+//       }
+//     }
+//   };
 
 export const selectSession = (state: RootState) => state.session;
 

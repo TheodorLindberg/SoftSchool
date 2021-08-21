@@ -14,6 +14,7 @@ import {
   selectSession,
   selectSessionStatus,
   sessionUseDev,
+  sessionValidated,
   validateSession,
 } from "modules/login/session.slice";
 
@@ -86,10 +87,10 @@ function SessionForm() {
       )
     ) {
       dispatch(sessionUseDev());
-      router.push("/");
+      router.push("/home/dashboard");
     }
   };
-
+  const [succedded, setSuccedded] = useState(false);
   return (
     <>
       <Formik
@@ -103,12 +104,15 @@ function SessionForm() {
               setErrors({ session: "Network Error" });
             }
             if (result == "invalid") setErrors({ session: "Invalid Session" });
-            if (result == "valid") setTimeout(() => router.push("/"), 300);
+            if (result == "valid") setSuccedded(true);
+            setTimeout(() => {
+              dispatch(sessionValidated(data.session));
+            }, 300);
           });
         }}
       >
         {({ values, isSubmitting, errors }) => (
-          <Form>
+          <Form autoComplete="off">
             <Box
               color={theme.palette.grey[600]}
               textAlign="center"
@@ -135,6 +139,7 @@ function SessionForm() {
               helperText={errors.session}
               variant="outlined"
               fullWidth={true as const}
+              autoComplete="off"
               as={TextField}
             />
 
@@ -145,9 +150,7 @@ function SessionForm() {
                   color="primary"
                   type={"submit"}
                   disabled={isSubmitting}
-                  className={
-                    sessionStatus == "valid" ? classes.buttonSuccess : ""
-                  }
+                  className={succedded ? classes.buttonSuccess : ""}
                 >
                   Använd session
                 </Button>

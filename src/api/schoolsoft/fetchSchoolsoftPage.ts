@@ -1,5 +1,5 @@
 import { Response } from "./definitions";
-import axios, { AxiosError, Method } from "axios";
+import axios, { AxiosError, AxiosResponse, Method } from "axios";
 import { Iconv } from "iconv";
 import HttpError from "../error";
 import { NextApiRequest } from "next";
@@ -49,7 +49,7 @@ export async function fetchSchoolsoftPage(
   //The Schoolsoft version needs to be decoded to utf-8
   if (response.headers["content-type"] == "text/html;charset=ISO-8859-1") {
     const iconv = new Iconv("ISO-8859-1", "utf-8");
-    return iconv.convert(response.data);
+    return iconv.convert(response.data) as any as string;
   } else {
     return response.data;
   }

@@ -1,5 +1,9 @@
 import React from "react";
-import LoginForm from "modules/login/LoginForm";
+import dynamic from "next/dynamic";
+
+const LoginForm = dynamic(() => import("modules/login/LoginForm"), {
+  ssr: false,
+});
 import Head from "next/head";
 
 import Box from "@material-ui/core/Box";
@@ -28,7 +32,8 @@ export default function Login() {
   const mainContent = React.useRef<HTMLDivElement | null>(null);
 
   const sessionStatus = useAppSelector(selectSessionStatus);
-  if (sessionStatus == "valid") router.push("/");
+  if (sessionStatus == "valid") router.push("/home/dashboard");
+
   React.useEffect(() => {
     document.body.classList.add(classes.bgDefault);
     return () => {

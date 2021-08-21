@@ -2,9 +2,12 @@ import { IconButton, Theme } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/styles";
-import { selectSessionValid } from "modules/login/session.slice";
+import sessionSlice, {
+  selectSession,
+  selectSessionValid,
+} from "modules/login/session.slice";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
 import { useAppSelector } from "store";
 import HomeFooter from "./Footer";
 import HomeNavbar from "./Navbar";
@@ -16,6 +19,13 @@ import { useEffect } from "react";
 import { useConfigDialog } from "modules/config/ConfigDialogProvider";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Link from "next/link";
+
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 
 const useStyles = makeStyles((theme: Theme) => ({
   mainContent: {
@@ -42,11 +52,18 @@ function HomeLayout({ children, back }: { children: any; back?: string }) {
 
   const router = useRouter();
 
-  const sessionValid = useAppSelector(selectSessionValid);
+  const session = useAppSelector(selectSession);
 
-  // useEffect(() => {
-  //   if (!sessionValid) router.push("/login");
-  // }, [sessionValid]);
+  const [showExpiredDialog, setShowExpiredDialog] = useState(false);
+  console.log("Home");
+  useEffect(() => {
+    if (!(session.status == "valid" || session.status == "validating")) {
+      if (session.noneReason === "destroyed" || session.noneReason === null) {
+        router.push("/");
+      } else if (session.noneReason == "expired") setShowExpiredDialog(true);
+      else alert("You should not access this page");
+    }
+  }, [session, router]);
 
   const getPageText = () => {
     for (let i = 0; i < routes.length; i++) {
@@ -98,6 +115,32 @@ function HomeLayout({ children, back }: { children: any; back?: string }) {
           <HomeFooter />
         </Container>
       </Box>
+      <Dialog
+        open={showExpiredDialog}
+        onClose={() => router.push("/login")}
+        aria-labelledby={`alert-dialog-expired-title`}
+        aria-describedby={`alert-dialog-expired-description`}
+      >
+        <DialogTitle id="alert-dialog-title">Utloggad</DialogTitle>
+        <DialogContent>
+          <DialogContentText id={`alert-dialog-expired-description`}>
+            Du har loggats ut automatiskt, logga in på nytt för att fortsätta
+            använda tjänsten
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => router.push("/")} autoFocus>
+            startsida
+          </Button>
+          <Button
+            onClick={() => router.push("/login")}
+            color="primary"
+            autoFocus
+          >
+            inloggning
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

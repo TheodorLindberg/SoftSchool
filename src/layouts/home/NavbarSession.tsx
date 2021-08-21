@@ -24,7 +24,9 @@ import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "store";
 import {
   selectSession,
+  sessionDestroy,
   sessionInvalidate,
+  sessionValidated,
   validateSession,
 } from "modules/login/session.slice";
 
@@ -292,7 +294,12 @@ function NavbarSession() {
                             color="secondary"
                             variant="outlined"
                             onClick={() => {
-                              dispatch(validateSession(session.session));
+                              dispatch(validateSession(session.session)).then(
+                                (result) => {
+                                  if (result == "valid")
+                                    dispatch(sessionValidated(session.session));
+                                }
+                              );
                             }}
                           >
                             Updatera
@@ -303,7 +310,7 @@ function NavbarSession() {
                             color="primary"
                             variant="outlined"
                             onClick={() => {
-                              dispatch(validateSession(session.session));
+                              dispatch(sessionDestroy());
                             }}
                           >
                             Logga ut

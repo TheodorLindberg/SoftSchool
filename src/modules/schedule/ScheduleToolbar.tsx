@@ -138,7 +138,7 @@ function ScheduleToolbar({
       (view.type == "teacher" && `,  ${scheduleList.list.teachers[view.id]}`) ||
       (view.type == "class" && `,  ${scheduleList.list.classes[view.id]}`) ||
       `,  ${scheduleList.list.name}` ||
-      ""
+      " "
     }`;
     return strin;
   }, [view, date]);
