@@ -19,7 +19,6 @@ export default async function handler(
     const cookieJar = new tough.CookieJar();
 
     const { username, password } = req.body;
-    console.log(req.body);
     var data = {
       authmech: "Användarnamn och Lösenord",
       do: "login",
@@ -39,14 +38,12 @@ export default async function handler(
     };
     const req1 = await axios(config as any);
 
-    console.log("Req 1");
     const responseData = req1.data;
     let titleIndex = responseData.search("<title>");
     let titleEndIndex = responseData.indexOf("<", titleIndex + 5);
     let title = responseData.substring(titleIndex + 7, titleEndIndex);
 
     if (title == "Sollentuna kommuns inloggningsportal") {
-      console.log("Invalid username or password");
       res.send({ error: "Invalid username or password" });
       return;
     }
@@ -59,7 +56,6 @@ export default async function handler(
     };
     const req2 = await axios(config2 as any);
 
-    console.log("Req 2");
     var config3 = {
       method: "get",
       url: "https://sms.schoolsoft.se/rudbeck/samlLogin.jsp",
@@ -69,7 +65,6 @@ export default async function handler(
     };
     const req3 = await axios(config3 as any);
 
-    console.log("Req 3");
     const $ = cheerio.load(req3.data);
 
     let formData = {
@@ -89,7 +84,6 @@ export default async function handler(
     };
     const req4 = await axios(config4 as any);
 
-    console.log("Req 4");
     let JSESSION = cookieJar
       .toJSON()
       .cookies.find((cookie) => cookie.key == "JSESSIONID");

@@ -1,6 +1,6 @@
 import HomeLayout from "layouts/home/HomeLayout";
 import React, { useState } from "react";
-import { useAppDispatch, useAppSelector } from "store";
+import { RootState, useAppDispatch, useAppSelector } from "store";
 
 import Switch from "@material-ui/core/Switch";
 import FormGroup from "@material-ui/core/FormGroup";
@@ -18,6 +18,7 @@ import {
 } from "modules/config/config.selector";
 
 import dynamic from "next/dynamic";
+import { useFirebase, useFirestore } from "react-redux-firebase";
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
 //import copy from "copy-text-to-clipboard";
@@ -31,19 +32,26 @@ function Dashboard() {
     // dispatch(saveConfig());
   };
 
+  const auth = useAppSelector((state: RootState) => state.firebase.auth);
+  const firestore = useFirestore();
+
+  const resetConfig = () => {
+    firestore.set(`/configs/${auth.uid}`, {});
+  };
+
   const [showData, setShowData] = useState(false);
 
   return (
     <HomeLayout>
       <Typography>
         SoftSchool använder en configurationsfil för att spara dina
-            inställningar, exempelvis meddelanden du gömt hoch senaste inloggning för
-        att möjliggöra notifieringarna
+        inställningar, exempelvis meddelanden du gömt hoch senaste inloggning
+        för att möjliggöra notifieringarna
       </Typography>
       <p>
         Här kan du se din konfigurationsfil som sparas lokalt på SoftSchools
         server, all annan data som visas på den här hemsidan hämtas direkt från
-        SchoolSoft genom "web scraping"
+        SchoolSoft genom &quot web scraping &quot
       </p>
       <Grid container>
         <Grid item>
@@ -90,6 +98,9 @@ function Dashboard() {
             name="config"
             enableClipboard={true}
           />
+          <Button variant="contained" color="secondary" onClick={resetConfig}>
+            Återställ
+          </Button>
         </>
       )}
     </HomeLayout>

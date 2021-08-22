@@ -11,7 +11,6 @@ export default async function handler(
   res: NextApiResponse<WeekScheduleResponse>
 ) {
   const { week, teacher } = req.query;
-  console.log(week);
   await getSchedule(
     getSchoolsoftToken(req),
     Number.parseInt(week as string) || moment().week() - 1,

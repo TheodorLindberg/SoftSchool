@@ -22,9 +22,13 @@ export const useConfigHidden = (
             : firestore.FieldValue.arrayUnion(id),
       });
     else if (!auth.isEmpty) {
-      firestore.update(`/configs/${auth.uid}`, {
-        hidden: [id],
-      });
+      firestore.set(
+        `/configs/${auth.uid}`,
+        {
+          hidden: [id],
+        },
+        { merge: true }
+      );
     } else if (showDialog) {
       openConfigDialog("");
     }

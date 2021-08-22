@@ -70,9 +70,9 @@ export default async function getNews(token: string): Promise<NewsList> {
             .each((i, elem) => {
               $(elem).attr(
                 "src",
-                `http://localhost:3000/api/schoolsoft/file/${
+                `/api/schoolsoft/file/${
                   $(elem).attr("src") || ""
-                }`
+                }&JSESSIONID=${token}`
               );
             });
 

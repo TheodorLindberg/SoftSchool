@@ -55,7 +55,6 @@ function HomeLayout({ children, back }: { children: any; back?: string }) {
   const session = useAppSelector(selectSession);
 
   const [showExpiredDialog, setShowExpiredDialog] = useState(false);
-  console.log("Home");
   useEffect(() => {
     if (!(session.status == "valid" || session.status == "validating")) {
       if (session.noneReason === "destroyed" || session.noneReason === null) {
@@ -81,7 +80,7 @@ function HomeLayout({ children, back }: { children: any; back?: string }) {
     if (auth.isLoaded && auth.isEmpty && !dismiss) {
       openConfigDialog("");
     }
-  }, [auth.isLoaded]);
+  }, [auth.isLoaded, auth.isEmpty]);
 
   return (
     <>

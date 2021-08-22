@@ -45,6 +45,7 @@ const sessionSlice = createSlice({
     },
     sessionValidated(state, action: PayloadAction<string>) {
       state.session = action.payload;
+      document.cookie = `JSESSIONID=${action.payload}`;
       state.status = "valid";
       state.expire = moment().add(25, "m").toISOString();
     },

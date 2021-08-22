@@ -19,12 +19,13 @@ import Settings from "@material-ui/icons/Settings";
 import componentStyles from "theme/layouts/home/navbar-dropdown";
 
 const useStyles = makeStyles(componentStyles);
-import avatar from "assets/img/theme/avatar.jpeg"; // with import
 import { useAppDispatch, useAppSelector } from "store";
 import { sessionDestroy } from "modules/login/session.slice";
 import { useRouter } from "next/router";
 import { useFirebase } from "react-redux-firebase";
 import { useConfigDialog } from "modules/config/ConfigDialogProvider";
+import { useState } from "react";
+import { useCallback } from "react";
 
 function HomeNavbarDropdown() {
   const classes = useStyles({});
@@ -39,6 +40,13 @@ function HomeNavbarDropdown() {
 
   const auth = useAppSelector((state) => state.firebase.auth);
   const profile = useAppSelector((state) => state.firebase.profile);
+
+  const getAvatarInfo = useCallback(() => {
+    return {
+      name: auth.displayName || profile.username || "Användare",
+      url: auth.photoURL || "/img/avatar.jpeg",
+    };
+  }, [auth.displayName, auth.photoURL, profile.username]);
 
   const isMenuOpen = Boolean(anchorEl);
   const { openConfigDialog } = useConfigDialog();
@@ -65,7 +73,6 @@ function HomeNavbarDropdown() {
     dispatch(sessionDestroy());
     firebase.logout();
     router.push("/");
-
     handleMenuClose();
   };
 
@@ -147,12 +154,10 @@ function HomeNavbarDropdown() {
       >
         <Avatar
           alt="..."
-          src={auth?.photoURL ? auth.photoURL : "/img/avatar.jpeg"}
+          src={getAvatarInfo().url}
           className={classes.avatarRoot}
         />
-        <Hidden smDown>
-          {auth.displayName || profile.username || "Användare"}
-        </Hidden>
+        <Hidden smDown>{getAvatarInfo().name}</Hidden>
       </Button>
       {renderMenu}
     </>

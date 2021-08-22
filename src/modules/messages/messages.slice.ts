@@ -15,7 +15,11 @@ import {
 
 import { SCHOOLSOFT_API } from "api/apis";
 import { AppDispatch, RootState } from "store";
-import { HttpError, HttpMiddlewareData } from "modules/Api/httpMiddleware";
+import {
+  HttpError,
+  HttpMiddlewareData,
+  ResourceSliceState,
+} from "modules/Api/httpMiddleware";
 import { selectConfigHidden } from "modules/config/config.selector";
 
 export interface Config {
@@ -24,9 +28,7 @@ export interface Config {
   };
 }
 
-export interface MessagesState {
-  status: "idle" | "loading" | "succeeded" | "failed";
-  error: HttpError | null;
+export interface MessagesState extends ResourceSliceState {
   messageList: MessageList;
 }
 

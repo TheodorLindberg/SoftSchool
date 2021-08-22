@@ -17,7 +17,6 @@ export default async function getCourses(token: string): Promise<CourseList> {
       .each((i, elem) => {
         layout[$(elem).text()] = i;
       });
-    console.log(layout);
     const getCategory = (name: string, e: cheerio.Cheerio) => {
       if (layout.hasOwnProperty(name)) {
         return $(e.children()[layout[name]]).text();

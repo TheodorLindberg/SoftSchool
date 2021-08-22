@@ -38,6 +38,7 @@ import DeveloperModeIcon from "@material-ui/icons/DeveloperMode";
 import { useRouter } from "next/router";
 import Moment from "react-moment";
 import moment from "moment";
+import { useFirebase } from "react-redux-firebase";
 
 const useStyles = makeStyles((theme: Theme) => ({
   background: {
@@ -99,7 +100,7 @@ function SessionDisplay() {
 
 function NavbarSession() {
   const classes = useStyles();
-
+  const firebase = useFirebase();
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
   const [icon, setIcon] = useState<JSX.Element>();
@@ -294,12 +295,14 @@ function NavbarSession() {
                             color="secondary"
                             variant="outlined"
                             onClick={() => {
-                              dispatch(validateSession(session.session)).then(
-                                (result) => {
-                                  if (result == "valid")
-                                    dispatch(sessionValidated(session.session));
-                                }
-                              );
+                              (
+                                dispatch(
+                                  validateSession(session.session)
+                                ) as any as Promise<"valid" | "error">
+                              ).then((result) => {
+                                if (result == "valid")
+                                  dispatch(sessionValidated(session.session));
+                              });
                             }}
                           >
                             Updatera
@@ -311,6 +314,7 @@ function NavbarSession() {
                             variant="outlined"
                             onClick={() => {
                               dispatch(sessionDestroy());
+                              router.push("/");
                             }}
                           >
                             Logga ut

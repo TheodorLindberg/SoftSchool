@@ -15,23 +15,20 @@ export default async function handler(
   res: NextApiResponse<string>
 ) {
   const path = req.url?.substr(req.url?.search("/file/") + 6);
-  console.log(path);
-  console.log(getSchoolsoftToken(req));
-  const response = await axios({
-    url: "https://sms.schoolsoft.se/rudbeck/jsp/student/" + path,
-    method: "GET",
-    responseType: "blob",
-    timeout: 0,
-    headers: {
-      cookie: `JSESSIONID=${getSchoolsoftToken(req)}`,
-    },
-  });
-  console.log(response.headers);
+  var myHeaders = new Headers();
 
-  let contentType = response?.headers
-    ? response.headers["content-type"]
-    : "text";
-  res.setHeader("Content-Type", contentType);
-  res.write(response.data);
-  res.end();
+  myHeaders.append("Cookie", `JSESSIONID=${getSchoolsoftToken(req)}`);
+
+  const response = await fetch(
+    "https://sms.schoolsoft.se/rudbeck/jsp/student/" + path,
+    {
+      method: "GET",
+      headers: myHeaders,
+    } as Request
+  );
+
+  let data = new Uint8Array(await response.arrayBuffer());
+  res.setHeader("Content-Type", response.headers.get("content-type") || "");
+  res.write(data);
+  res.end("");
 }

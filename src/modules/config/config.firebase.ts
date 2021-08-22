@@ -8,13 +8,13 @@ import store from "store";
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCMKsU9M9q6LkKAslQK475qEb93i8rNnas",
-  authDomain: "softschool-322007.firebaseapp.com",
-  projectId: "softschool-322007",
-  storageBucket: "softschool-322007.appspot.com",
-  messagingSenderId: "693406989546",
-  appId: "1:693406989546:web:aa3113aa0612334334ab93",
-  measurementId: "G-CQ7Y4F356X",
+  apiKey: "AIzaSyCn_egwkyVLAOiq-Gc2U63E4OOIEz3Kwcs",
+  authDomain: "softschool1.firebaseapp.com",
+  projectId: "softschool1",
+  storageBucket: "softschool1.appspot.com",
+  messagingSenderId: "251945559351",
+  appId: "1:251945559351:web:855a4004e83e4dd01226b2",
+  measurementId: "G-3CLBQKTL2B",
 };
 
 export const rrfConfig = {
@@ -24,7 +24,6 @@ export const rrfConfig = {
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
   firebase.firestore(); // <- needed if using firestore
-  console.log("Init");
 }
 // Initialize firebase instance
 

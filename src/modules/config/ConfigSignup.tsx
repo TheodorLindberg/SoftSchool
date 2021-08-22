@@ -61,13 +61,13 @@ function ConfigSignup() {
               });
             }}
           >
-            <Image
+            {/* <Image
               src="/img/icons/common/google.svg"
               alt="Google"
               width="20"
               height="20"
               className={classes.buttonImg}
-            />
+            /> */}
             <Box component="span" marginLeft=".75rem">
               Google
             </Box>
@@ -101,7 +101,6 @@ function ConfigSignup() {
                 setSubmitting(false);
               })
               .catch((error) => {
-                console.log(error);
                 setSubmitting(false);
               });
           }}

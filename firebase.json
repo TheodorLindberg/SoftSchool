@@ -1,0 +1,14 @@
+{
+  "hosting": {
+    "public": "out",
+    "site": "rsoftschool",
+
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

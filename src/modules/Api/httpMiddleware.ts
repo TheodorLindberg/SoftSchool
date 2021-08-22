@@ -16,6 +16,11 @@ export interface HttpError {
   message: string;
 }
 
+export interface ResourceSliceState {
+  status: "idle" | "loading" | "succeeded" | "failed";
+  error: HttpError | null;
+}
+
 export interface HttpMiddlewareData {
   path: string | ((state: RootState) => string);
   method: "GET" | "POST" | "DELETE";

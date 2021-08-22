@@ -27,7 +27,7 @@ export interface ScheduleListState {
 }
 
 const initialState: ScheduleListState = {
-  list: { teachers: [], classes: [], studentId: -1 },
+  list: { teachers: [], classes: [], studentId: -1, name: "" },
   status: "idle",
   error: null,
 };

@@ -39,6 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       display: "flex",
       alignItems: "center",
+      fontWeight: "bold",
     },
     wrapper: {
       margin: theme.spacing(1),
@@ -97,18 +98,21 @@ function SessionForm() {
         initialValues={{ session: "" }}
         onSubmit={(data, { setSubmitting, setErrors }) => {
           setSubmitting(true);
-          dispatch(validateSession(data.session)).then((result) => {
-            setSubmitting(false);
-            if (result == "error") {
-              setErrorDialogOpen(true);
-              setErrors({ session: "Network Error" });
+          (dispatch(validateSession(data.session)) as any).then(
+            (result: any) => {
+              setSubmitting(false);
+              if (result == "error") {
+                setErrorDialogOpen(true);
+                setErrors({ session: "Network Error" });
+              }
+              if (result == "invalid")
+                setErrors({ session: "Invalid Session" });
+              if (result == "valid") setSuccedded(true);
+              setTimeout(() => {
+                dispatch(sessionValidated(data.session));
+              }, 300);
             }
-            if (result == "invalid") setErrors({ session: "Invalid Session" });
-            if (result == "valid") setSuccedded(true);
-            setTimeout(() => {
-              dispatch(sessionValidated(data.session));
-            }, 300);
-          });
+          );
         }}
       >
         {({ values, isSubmitting, errors }) => (

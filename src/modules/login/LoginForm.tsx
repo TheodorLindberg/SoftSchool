@@ -18,6 +18,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { SCHOOLSOFT_API } from "api/apis";
 import { green } from "@material-ui/core/colors";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme: Theme) => ({
   cardRoot: {
@@ -43,6 +44,13 @@ const useStyles = makeStyles((theme: Theme) => ({
       borderColor: theme.palette.secondary.main + "!important",
       backgroundColor: theme.palette.secondary.main,
     },
+  },
+  buttonProgress: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    marginTop: -12,
+    marginLeft: -12,
   },
   buttonSuccess: {
     backgroundColor: green[500],
@@ -176,6 +184,12 @@ function LoginForm() {
                     className={success ? classes.buttonSuccess : ""}
                   >
                     Logga in
+                    {isSubmitting && (
+                      <CircularProgress
+                        size={24}
+                        className={classes.buttonProgress}
+                      />
+                    )}
                   </Button>
                 </Box>
                 <Grid container justifyContent="flex-end">

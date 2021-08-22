@@ -26,6 +26,10 @@ import { selectNews } from "./news.slice";
 import Moment from "react-moment";
 import { useCallback } from "react";
 import Image from "next/image";
+import { useFilterdNewsList, useNewsFilter } from "./NewsFilterProvider";
+import NewsFilter from "./NewsFilter";
+import getNews from "api/schoolsoft/scraper/getNews";
+import ResourceState from "modules/Api/ResourceState";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -90,20 +94,13 @@ function NewsList() {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState<number | null>(null);
 
-  const news = useAppSelector(selectNews).newsList;
+  const news = useAppSelector(selectNews);
 
   const [hidden, toggleMessageHidden] = useConfigHidden(true);
-  const getNews = useCallback(() => {
-    let ret: { [instance: string]: FilterdNews[] } = {};
 
-    news.forEach((elem) => {
-      let key = elem.senderInstance || "Okänd";
-      if (ret.hasOwnProperty(key))
-        ret[key].push({ ...elem, hidden: hidden.indexOf(elem.id) > -1 });
-      else ret[key] = [{ ...elem, hidden: hidden.indexOf(elem.id) > -1 }];
-    });
-    return Object.entries(ret);
-  }, [news, hidden]);
+  const { data: newsFilter } = useNewsFilter();
+
+  const filterdNewsList = useFilterdNewsList();
 
   const handleAccordionChange =
     (panel: number) =>
@@ -113,7 +110,7 @@ function NewsList() {
 
   return (
     <div>
-      {getNews().map(([instance, newsList]) => (
+      {filterdNewsList.map(([instance, newsList]) => (
         <div key={instance} style={{ marginBottom: 16 }}>
           <Typography gutterBottom variant="h6">
             {instance}
@@ -222,8 +219,11 @@ function NewsList() {
           ))}
         </div>
       ))}
-
-      {news.length == 0 && <p>Det finns inte några meddelanden att visa</p>}
+      <ResourceState
+        resource="nyheter"
+        state={news}
+        show={filterdNewsList.length == 0}
+      ></ResourceState>
     </div>
   );
 }

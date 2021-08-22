@@ -68,7 +68,6 @@ function AppointmentContentBase({
   resources,
   type,
 }: Appointments.AppointmentContentProps) {
-  console.log(children);
   return <React.Fragment>{children}Hello</React.Fragment>;
 }
 
@@ -178,12 +177,11 @@ function Dashboard() {
     if (scheduleView.type && scheduleView.id) {
       dispatch(fetchSchedule(week, scheduleView.type, scheduleView.id));
     }
-  }, [week, scheduleView.type, scheduleView.id]);
+  }, [week, scheduleView.type, scheduleView.id, dispatch]);
 
   useEffect(() => {});
 
   const currentDateChange = (currentDate: Date) => {
-    console.log(moment(currentDate).week());
     setWeek(moment(currentDate).week() - 1);
   };
 
@@ -194,8 +192,6 @@ function Dashboard() {
       id: id,
     });
   };
-
-  console.log(week);
 
   if (week == 0) setWeek(52);
   const theme = useTheme();

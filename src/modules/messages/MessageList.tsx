@@ -1,6 +1,6 @@
 import React from "react";
 import { RootState, useAppSelector } from "store";
-import { Theme, makeStyles } from "@material-ui/core";
+import { Theme, makeStyles, CircularProgress } from "@material-ui/core";
 
 import Accordion from "@material-ui/core/Accordion";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
@@ -12,7 +12,12 @@ import { Message } from "api/schoolsoft/definitions";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MessageIcon from "@material-ui/icons/Message";
 import Button from "@material-ui/core/Button";
-import { FilterdMessage, selectFilteredMessages } from "./messages.slice";
+import {
+  FilterdMessage,
+  selectFilteredMessages,
+  selectMessageList,
+  selectMessages,
+} from "./messages.slice";
 import {
   isEmpty,
   populate,
@@ -23,6 +28,8 @@ import {
 import { useConfigDialog } from "modules/config/ConfigDialogProvider";
 import { selectConfigHidden } from "modules/config/config.selector";
 import { useConfigHidden } from "modules/config/config.hooks";
+import ErrorIcon from "@material-ui/icons/Error";
+import ResourceState from "modules/Api/ResourceState";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -63,6 +70,7 @@ function MessageList() {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState<number | null>(null);
 
+  const messagesState = useAppSelector((root: RootState) => root.messages);
   const messages = useAppSelector(selectFilteredMessages);
 
   const [hidden, toggleMessageHidden] = useConfigHidden(true);
@@ -72,7 +80,7 @@ function MessageList() {
     (event: React.ChangeEvent<unknown>, isExpanded: boolean) => {
       setExpanded(isExpanded ? panel : null);
     };
-    
+
   return (
     <div>
       {messages.map((message: FilterdMessage) => {
@@ -142,7 +150,11 @@ function MessageList() {
           </Accordion>
         );
       })}
-      {messages.length == 0 && <p>Det finns inte några meddelanden att visa</p>}
+      <ResourceState
+        resource="meddelanden"
+        state={messagesState}
+        show={messages.length == 0}
+      ></ResourceState>
     </div>
   );
 }

@@ -21,6 +21,7 @@ import FormGroup from "@material-ui/core/FormGroup";
 import { useAppDispatch, useAppSelector } from "store";
 import { selectNews } from "./news.slice";
 import { useCallback } from "react";
+import { useNewsFilter } from "./NewsFilterProvider";
 
 const MenuProps = {
   PaperProps: {
@@ -69,7 +70,26 @@ function NewsFilter() {
     return Object.entries(senders).sort();
   }, [news, dispatch]);
 
-  const handleSenderToggle = (e: React.ChangeEvent<HTMLInputElement>) => {};
+  const {
+    data: { senders, showHidden },
+    toggleHidden,
+    toggleSender,
+  } = useNewsFilter();
+
+  const handleSenderToggle = (
+    e: React.ChangeEvent<{
+      name?: string | undefined;
+      value: unknown;
+    }>
+  ) => {
+    toggleSender(e.target.value as string[]);
+  };
+
+  const handleShowHiddenChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    toggleHidden(event.target.checked);
+  };
 
   return (
     <Grid container justifyContent="flex-end">
@@ -83,7 +103,7 @@ function NewsFilter() {
               labelId="sender-mutiple-checkbox-label"
               id="sender-mutiple-checkbox"
               multiple
-              value={teachers}
+              value={senders}
               onChange={handleSenderToggle}
               input={<Input />}
               renderValue={(selected: any) => selected.join(", ")}
@@ -92,7 +112,7 @@ function NewsFilter() {
               {getSenders().map(([teacher, val]: [string, any]) => {
                 return (
                   <MenuItem key={teacher} value={teacher}>
-                    <Checkbox checked={teachers.indexOf(teacher) > -1} />
+                    <Checkbox checked={senders.indexOf(teacher) > -1} />
                     <ListItemText primary={teacher} />
                   </MenuItem>
                 );

@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
-import { Theme, withStyles } from "@material-ui/core/styles";
+import { Theme, WithStyles, withStyles } from "@material-ui/core/styles";
 import classNames from "clsx";
 import { Appointments } from "@devexpress/dx-react-scheduler-material-ui";
 
@@ -93,7 +93,8 @@ const VerticalAppointmentBase = ({
   recurringIconComponent: any,
   durationType,
   ...restProps
-}: Appointments.AppointmentContentProps) => {
+}: Appointments.AppointmentContentProps &
+  WithStyles<any> & { className: any }) => {
   const repeat = !!data.rRule;
   const isShortHeight = durationType === "short";
   const isMiddleHeight = durationType === "middle";
@@ -170,4 +171,4 @@ const VerticalAppointmentBase = ({
 
 export const AppointmentContent = withStyles(styles as any, {
   name: "VerticalAppointment",
-})(VerticalAppointmentBase);
+})(VerticalAppointmentBase) as any;

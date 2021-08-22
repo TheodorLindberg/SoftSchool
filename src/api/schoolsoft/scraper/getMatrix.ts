@@ -35,7 +35,6 @@ export default async function getMatrix(
 
   const $ = Cheerio.load(page);
   const abilities: Array<Ability> = [];
-  console.log(page);
   $("body > table:nth-child(1) > tbody > tr.abilitychanges ").each(
     (i: number, elem: cheerio.Element) => {
       const $tr = $(elem);

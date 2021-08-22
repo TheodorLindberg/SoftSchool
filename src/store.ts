@@ -40,9 +40,9 @@ const combinedReducer = combineReducers({
 
 const rootReducer = (state: any, action: any) => {
   // check for action type
-  if (action.type === "session/logout") {
+  if (action.type === "session/sessionDestroy") {
     localStorage.removeItem("state");
-    state = undefined;
+    state = {};
   }
   return combinedReducer(state, action);
 };

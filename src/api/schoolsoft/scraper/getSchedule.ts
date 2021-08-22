@@ -111,6 +111,7 @@ function getScheduleImpl($: cheerio.Root, week: number) {
           .add(week, "weeks")
           .add(day - (4 + yearAdd), "days")
           .add(moment.duration(data.start))
+          .utcOffset(120, true)
           .toISOString(),
         endDate: moment()
           .startOf("year")
@@ -118,6 +119,7 @@ function getScheduleImpl($: cheerio.Root, week: number) {
           .add(week, "weeks")
           .add(day - (4 + yearAdd), "days")
           .add(moment.duration(data.end))
+          .utcOffset(120, true)
           .toISOString(),
         location: data.location,
         type: "lesson",

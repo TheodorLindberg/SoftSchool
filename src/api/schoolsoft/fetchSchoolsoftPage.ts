@@ -16,7 +16,6 @@ export async function fetchSchoolsoftPage(
   method?: Method,
   data?: any
 ) {
-  console.log(url + path);
   if (!JSESSIONID) throw new HttpError("Invalid Schoolsoft Session", 403);
   let response;
 
