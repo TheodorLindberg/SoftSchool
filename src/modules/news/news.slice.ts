@@ -89,10 +89,6 @@ export const selectNews = (state: RootState) => state.news;
 //   );
 // };
 
-export interface FilterdNews extends News {
-  hidden: boolean;
-}
-
 // export const selectFilteredNews = createSelector(
 //   // First input selector: all todos
 //   selectNews,

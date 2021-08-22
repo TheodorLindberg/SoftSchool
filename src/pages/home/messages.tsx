@@ -15,8 +15,6 @@ import {
 import HomeLayout from "layouts/home/HomeLayout";
 import MessageList from "modules/messages/MessageList";
 import MessageFilter from "modules/messages/MessageFilter";
-import FetchErrorDialog from "modules/Api/FetchErrorDialog";
-
 const useStyles = makeStyles((theme: Theme) => ({
   buttonLoadMore: {},
 }));
@@ -45,8 +43,6 @@ function Messages() {
 
   return (
     <HomeLayout>
-      <FetchErrorDialog resource="meddelanden" error={messageError} />
-
       <MessageFilter />
       <MessageList />
       <Grid container justifyContent="center" style={{ marginTop: 10 }}>

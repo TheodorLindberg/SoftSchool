@@ -1,6 +1,7 @@
 import HomeLayout from "layouts/home/HomeLayout";
-import FetchErrorDialog from "modules/Api/FetchErrorDialog";
 import { fetchNews, selectNews } from "modules/news/news.slice";
+import NewsFilter from "modules/news/NewsFilter";
+import NewsFilterProvider from "modules/news/NewsFilterProvider";
 import NewsList from "modules/news/NewsList";
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "store";
@@ -17,8 +18,10 @@ function News() {
 
   return (
     <HomeLayout>
-      <FetchErrorDialog resource="nyheter" error={news.error} />
-      <NewsList />
+      <NewsFilterProvider>
+        <NewsFilter />
+        <NewsList />
+      </NewsFilterProvider>
     </HomeLayout>
   );
 }
